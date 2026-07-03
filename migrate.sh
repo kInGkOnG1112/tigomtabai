@@ -1,2 +1,2 @@
-python manage.py makemigrations ledger profiles
+python manage.py makemigrations ledger main profiles
 python manage.py migrate
