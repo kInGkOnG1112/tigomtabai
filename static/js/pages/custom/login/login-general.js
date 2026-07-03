@@ -11,20 +11,12 @@ var KTLogin = function() {
         _login.removeClass('login-forgot-on');
         _login.removeClass('login-signin-on');
         _login.removeClass('login-signup-on');
-        _login.removeClass('login-reset-password-on');
 
         _login.addClass(cls);
 
         KTUtil.animateClass(KTUtil.getById(form), 'animate__animated animate__backInUp');
     }
-	/*$('#signin-username').on('keypress', function (event) {
-		let regex = new RegExp("^[a-zA-Z0-9_().,-]+$");
-		let key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
-		if (!regex.test(key)) {
-		   event.preventDefault();
-		   return false;
-		}
-	});*/
+
     var _handleSignInForm = function() {
         var validation;
 
@@ -61,29 +53,19 @@ var KTLogin = function() {
             e.preventDefault();
 
             validation.validate().then(function(status) {
-		        if (status === 'Valid') {
-					console.log(validation.data);
-					var username = $('#signin-username').val();
-					var password = $('#signin-password').val();
-					var loginBtn = $('#kt_login_signin_submit')
-
-					loginBtn.html('Logging in').attr('disabled', true)
-					$.post('/ajax/login', {
-						'username': username,
-						'password': password,
-						'csrfmiddlewaretoken': csrf_token
-						}, function(data) {
-						if (!data.success) {
-							swal.fire({
-								text: data.data.error,
-								icon: "error",
-								confirmButton: "Ok, got it!"
-							});
-							loginBtn.html('Login').attr('disabled', false)
-						}
-						location.href = data.data.otp_activated ? 'otp-login/' : '/';
+		        if (status == 'Valid') {
+                    swal.fire({
+		                text: "All is cool! Now you submit this form",
+		                icon: "success",
+		                buttonsStyling: false,
+		                confirmButtonText: "Ok, got it!",
+                        customClass: {
+    						confirmButton: "btn font-weight-bold btn-light-primary"
+    					}
+		            }).then(function() {
+						location.href = 'dashboard/'
+						KTUtil.scrollTop();
 					});
-					KTUtil.scrollTop();
 				} else {
 					swal.fire({
 		                text: "Sorry, looks like there are some errors detected, please try again.",
@@ -99,13 +81,20 @@ var KTLogin = function() {
 				}
 		    });
         });
-		// Handle cancel button
+
+        // Handle forgot button
         $('#kt_login_forgot').on('click', function (e) {
             e.preventDefault();
-			$('.message-box').addClass('d-none');
             _showForm('forgot');
         });
+
+        // Handle signup
+        $('#kt_login_signup').on('click', function (e) {
+            e.preventDefault();
+            _showForm('signup');
+        });
     }
+
     var _handleSignUpForm = function(e) {
         var validation;
         var form = KTUtil.getById('kt_login_signup_form');
@@ -239,7 +228,8 @@ var KTLogin = function() {
 
             validation.validate().then(function(status) {
 		        if (status == 'Valid') {
-                    reset_password_request()
+                    // Submit form
+                    KTUtil.scrollTop();
 				} else {
 					swal.fire({
 		                text: "Sorry, looks like there are some errors detected, please try again.",
@@ -255,6 +245,7 @@ var KTLogin = function() {
 				}
 		    });
         });
+
         // Handle cancel button
         $('#kt_login_forgot_cancel').on('click', function (e) {
             e.preventDefault();

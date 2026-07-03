@@ -104,7 +104,7 @@
 
 /*
   	Keenthemes Icons Font: Ki
-  	Creation date: 25/01/2020
+  	Creation date: 03/08/2020
  */
 @font-face {
   font-family: "Ki";
@@ -329,6 +329,9 @@
 
 .ki-clock:before {
   content: "\f142"; }
+
+.ki-dots:before {
+  content: "\f143"; }
 
 /**
  * FormValidation (https://formvalidation.io)
@@ -4126,7 +4129,7 @@ Build date: 2019-12-19 16:51:02
   color: silver;
   font-size: 11px; }
 
-/*! nouislider - 14.6.0 - 6/27/2020 */
+/*! nouislider - 14.6.2 - 9/16/2020 */
 /* Functional styling;
  * These styles are required for noUiSlider to function.
  * You don't need to change these rules to apply your design.
@@ -7106,7 +7109,7 @@ Build date: 2019-12-19 16:51:02
 
 /*!
  * animate.css - https://animate.style/
- * Version - 4.1.0
+ * Version - 4.1.1
  * Licensed under the MIT license - http://opensource.org/licenses/MIT
  *
  * Copyright (c) 2020 Animate.css
@@ -10586,6 +10589,13 @@ button.toast-close-button {
   pointer-events: none;
   position: absolute;
   top: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
   overflow: hidden;
   white-space: nowrap;
   z-index: 12;
@@ -10884,10 +10894,10 @@ button.toast-close-button {
   stroke: #333;
   rx: 2; }
 
-.apexcharts-canvas.apexcharts-zoomable .hovering-zoom {
+.apexcharts-svg.apexcharts-zoomable.hovering-zoom {
   cursor: crosshair; }
 
-.apexcharts-canvas.apexcharts-zoomable .hovering-pan {
+.apexcharts-svg.apexcharts-zoomable.hovering-pan {
   cursor: move; }
 
 .apexcharts-zoom-icon,
