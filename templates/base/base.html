@@ -20,6 +20,10 @@
 		<link rel="shortcut icon" href="{% static 'media_source/logos/favicon.png' %}" />
 	</head>
 	<body id="kt_body" class="header-fixed header-mobile-fixed subheader-enabled page-loading">
+        
+        <script src="{% static 'js/modals.js' %}"></script>
+        <script src="{% static 'js/ajax-request.js' %}"></script>
+        
         {% include 'base/header-mobile.html' %}
 		<div class="d-flex flex-column flex-root">
 			<div class="d-flex flex-row flex-column-fluid page">
@@ -70,7 +74,33 @@
 		<script src="{% static 'js/scripts.bundle.js' %}"></script>
 		<script src="{% static 'plugins/custom/fullcalendar/fullcalendar.bundle.js' %}"></script>
 		<script src="{% static 'js/pages/widgets.js' %}"></script>
+        <script>
+            const Ajax = new AjaxRequest()
+            function ajaxSubpageRequest(formData){
+                const requestURL = formData.request_url
+                const divComponent = $('#'+formData.component_id)
+                const timer = 0
+                Ajax.subpageRequest(
+                    requestURL,
+                    formData,
+                    divComponent,
+                    timer
+                )
+            }
+            function buildFormData(overrides = {}){
+                return Object.assign({
+                    'page': 1,
+                    'perpage': 10,
+                    'paginated': true,
+                    'component_id': 'divDataList',
+                    'request_url': ''
+                }, overrides)
+            }
+        </script>
         {% block script %}
+        {% endblock %}
+        {% block modals %}
+            {% include 'components/modals/modal-1.html' %}
         {% endblock %}
 	</body>
 </html>

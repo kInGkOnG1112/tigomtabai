@@ -1,52 +1,57 @@
 class AjaxRequest {
 
-    postRequest(
-        requestURL,
-        formData,
-        submitBtn,
-        redirectionURL,
-    ){
+    async postRequest(requestURL, formData, submitBtn = null, redirectionURL = '', ){
         let oldBtnText = ''
+
         if (submitBtn) {
             oldBtnText = submitBtn.html()
             submitBtn.html('Submitting...').attr('disabled', true);
         }
-        return $.Deferred((defer) => {
-            $.ajax({
+        try {
+            const response = await $.ajax({
                 url: requestURL,
                 data: formData,
                 type: "POST",
                 processData: false,
                 contentType: false,
-                success: function (response) {
-                    console.log(response.error)
-                    Swal.fire({ allowOutsideClick: false,
-                        title: response.success ? 'Success!' : 'Error!',
-                        text: response.message,
-                        icon: response.success ? "success":"error",
-                        type: response.success ? "success":"error",
-                    }).then(() => {
-                        if (response.success) {
-                            window.onbeforeunload = null;
-                            if (redirectionURL !== 'flag_redirection'){
-                                location.href = response.url ? response.url : redirectionURL
-                            }
-                        }
-                    });
-                    if (submitBtn) {submitBtn.html(oldBtnText).attr('disabled', false);}
-                    // Resolve the promise with the response
-                    defer.resolve(response);
-                }
+                dataType: "json"
             });
-        }).promise(); // Convert to a promise to enable chaining
+
+            await Swal.fire({
+                allowOutsideClick: false,
+                title: response.success ? 'Success!' : 'Error!',
+                text: response.message || (response.success ? 'Operation successful.' : 'An error occurred.'),
+                icon: response.success ? "success" : "error",
+            });
+
+            if (response.success) {
+                window.onbeforeunload = null;
+                if (redirectionURL !== 'flag_redirection') {
+                    window.location.href = response.url || redirectionURL;
+                }
+            }
+
+            return response;
+
+        } catch (error) {
+            console.error("API Error:", error);
+
+            await Swal.fire({
+                title: 'Error!',
+                text: 'Something went wrong with the server request.',
+                icon: 'error'
+            });
+
+            throw error;
+
+        } finally {
+            if (submitBtn) {
+                submitBtn.html(oldBtnText).prop('disabled', false);
+            }
+        }
     }
 
-    subpageRequest(
-        requestURL,
-        formData,
-        divComponent,
-        timer=1000
-    ){
+    subpageRequest(requestURL, formData, divComponent, timer=1000){
         const divLoader = `
             <div class="col-lg-12 pl0">
                 <div class="d-flex justify-content-center align-items-center p100">
@@ -56,6 +61,7 @@ class AjaxRequest {
             </div>
         `
         divComponent.html(divLoader)
+
         setTimeout(function () {
             $.ajax({
                 url: requestURL,
