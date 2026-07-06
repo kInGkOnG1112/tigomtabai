@@ -22,6 +22,7 @@ from . import settings
 
 urlpatterns = [
     path('', include('main.urls')),
+    path('profile/', include('profiles.urls')),
     path('admin/', admin.site.urls),
 ]
 

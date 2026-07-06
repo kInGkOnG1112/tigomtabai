@@ -63,7 +63,7 @@ var KTLogin = function() {
     						confirmButton: "btn font-weight-bold btn-light-primary"
     					}
 		            }).then(function() {
-						location.href = 'dashboard/'
+						location.href = 'profile/dashboard/'
 						KTUtil.scrollTop();
 					});
 				} else {
