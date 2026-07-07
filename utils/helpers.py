@@ -24,15 +24,15 @@ def upload_files_to(instance, filename):
 
 
 def get_global_context(request, context):
-    navigations = []
-
-    # if request.user.is_authenticated:
     navigations = get_navigation_items(request)
 
     active_page = context.get('page')
     filtered_navigations = []
     for nav in navigations:
-        nav['is_active'] = (active_page == nav['id'])
+        if active_page == nav['id']:
+            nav['is_active'] = True
+
+
         filtered_navigations.append(nav)
 
     global_context = {
@@ -71,17 +71,17 @@ def get_navigation_items(request):
         {
             'menu_name': 'Budgets',
             'id': 'budgets',
-            'url': reverse('profile:dashboard'),
+            'url': reverse('profile:budgets'),
         },
         {
             'menu_name': 'Accounts',
             'id': 'accounts',
-            'url': reverse('profile:dashboard'),
+            'url': reverse('profile:accounts'),
         },
         {
             'menu_name': 'Categories',
             'id': 'categories',
-            'url': reverse('profile:dashboard'),
+            'url': reverse('profile:categories'),
         },
     ]
 
