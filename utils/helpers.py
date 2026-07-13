@@ -3,6 +3,7 @@ import uuid
 
 from django.urls import reverse
 from django.utils.timezone import now
+# from audit_logging import user_activity_log
 
 
 
@@ -86,3 +87,39 @@ def get_navigation_items(request):
     ]
 
     return navigations
+
+
+
+
+class GenericResponse:
+
+    @staticmethod
+    def error(request, method='', message='', user_message='Unable to process at the moment!', reference_number_list: dict = None):
+        # user_activity_log.save(
+        #     request=request,
+        #     activity_type=method,
+        #     activity_details=message if message else user_message,
+        #     success=False,
+        #     reference_number_list=reference_number_list
+        # )
+
+        return {
+            'success': False,
+            'error': message if message else user_message,
+            'message': user_message
+        }
+
+    @staticmethod
+    def success(request, method='', message='Success!', data=None, redirection=None, reference_number_list: dict = None):
+        # user_activity_log.save(
+        #     request=request,
+        #     activity_type=method,
+        #     activity_details=message,
+        #     reference_number_list=reference_number_list
+        # )
+        return {
+            'success': True,
+            'message': message,
+            'data': data,
+            'redirection': redirection
+        }

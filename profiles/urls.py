@@ -1,13 +1,29 @@
 from django.urls import path
-from . import views
+from profiles.views import views, modals, ajax
 
 app_name = 'profile'
 urlpatterns = []
-urlpatterns += {
+urlpatterns_views = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('entries/', views.entries, name='entries'),
     path('recurring-payments/', views.recurring_payments, name='recurring_payments'),
     path('budgets/', views.budgets, name='budgets'),
     path('accounts/', views.accounts, name='accounts'),
     path('categories/', views.categories, name='categories'),
-}
+]
+
+urlpatterns_subpages = []
+
+urlpatterns_table_subpages = []
+
+urlpatterns_ajax = [
+    path('ajax/add-category/', ajax.add_category, name='ajax_add_category'),
+
+]
+
+urlpatterns_modals = [
+    path('modals/categories/add/', modals.add_category, name='modal_add_category')
+]
+
+
+urlpatterns = urlpatterns + urlpatterns_views + urlpatterns_subpages + urlpatterns_table_subpages + urlpatterns_ajax + urlpatterns_modals

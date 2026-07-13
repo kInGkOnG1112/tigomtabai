@@ -1,0 +1,26 @@
+{% if link %}
+    <a href="{{ link }}" class="btn {{ class }}">
+        {% if icon %}{{ icon }}{% endif %}
+        {{ text }}
+    </a>
+{% else %}
+    <button id="{{ id }}"
+       class="btn {{ class }} 
+       {% if dropdown %}dropdown-toggle{% endif %}"
+       {% if disabled %}disabled{% endif %}
+       {% if modal_url %}
+           data-open-modal
+           data-modal-url="{{ modal_url }}"
+           data-modal-id="{{ modal_id }}"
+           data-modal-size="{{ modal_size }}"
+       {% endif %}
+       {% if dropdown %}
+           id="{{ id }}"
+           data-toggle="dropdown"
+           aria-haspopup="true"
+           aria-expanded="false"
+       {% endif %}>
+        {% if icon %}{{ icon }}{% endif %}
+        {{ text }}
+    </button>
+{% endif %}

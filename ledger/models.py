@@ -34,7 +34,12 @@ class Account(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=150)
-    icon = models.ImageField(upload_to=upload_files_to, **OPTIONAL_FIELD)
+    icon = models.ForeignKey(
+        'main.Icons',
+        on_delete=models.DO_NOTHING,
+        related_name='category_icon'
+    )
+    description = models.TextField(max_length=500, **OPTIONAL_FIELD)
     type = models.CharField(
         max_length=20,
         choices=CategoryType.choices,

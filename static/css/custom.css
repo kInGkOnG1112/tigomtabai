@@ -1,0 +1,11 @@
+.icon-selection {
+    display: inline-block;
+    border: 2px solid transparent !important;
+    border-radius: 0.42rem;
+    background: #F3F6F9;
+}
+
+.icon-selection:hover, .icon-selection.active {
+    border-color: #3445E5 !important;
+    cursor: pointer;
+}
