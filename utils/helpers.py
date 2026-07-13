@@ -1,6 +1,9 @@
+import operator
 import os
 import uuid
 
+from functools import reduce
+from django.db.models import Q
 from django.urls import reverse
 from django.utils.timezone import now
 # from audit_logging import user_activity_log
@@ -123,3 +126,18 @@ class GenericResponse:
             'data': data,
             'redirection': redirection
         }
+
+
+def search_result(queryset, search, orm_lookups):
+    search_terms = search.split()
+    if not search_terms:
+        return queryset
+
+    or_queries = [
+        Q(**{orm_lookup: term})
+        for term in search_terms
+        for orm_lookup in orm_lookups
+    ]
+    combined_query = reduce(operator.or_, or_queries)
+
+    return queryset.filter(combined_query)
