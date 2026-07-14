@@ -1,11 +1,14 @@
 from django.db import transaction
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+
+from utils.decorators import login_required
 from utils.helpers import GenericResponse
 from ledger.models import Category
 from main.models import Icons
 
 
+@login_required
 @require_POST
 def add_category(request):
     method = 'Add Category'
@@ -41,7 +44,7 @@ def add_category(request):
         ))
 
 
-
+@login_required
 @require_POST
 def update_category(request):
     method = 'Update Category'

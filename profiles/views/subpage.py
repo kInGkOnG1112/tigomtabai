@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
+
+from utils.decorators import login_required
 from utils.helpers import search_result
 from ledger.models import Category
 
 
+@login_required
 @require_GET
 def category_list(request):
     data = request.GET

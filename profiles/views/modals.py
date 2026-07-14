@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from ledger.models import Category
 from main.models import Icons
+from utils.decorators import login_required
 
 
+@login_required
 def add_category(request):
     icons = Icons.objects.filter(is_active=True)
     context = {
@@ -11,6 +13,7 @@ def add_category(request):
     return render(request, template_name="screens/modals/add-category.html", context=context)
 
 
+@login_required
 def update_category(request, id):
     category = Category.objects.get(id=id)
     icons = Icons.objects.filter(is_active=True)

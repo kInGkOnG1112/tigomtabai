@@ -1,8 +1,10 @@
 from django.shortcuts import render
 
+from utils.decorators import login_required
 from utils.helpers import get_global_context
 
 
+@login_required
 def dashboard(request):
     context = {
         'page': 'dashboard',
@@ -12,6 +14,7 @@ def dashboard(request):
     return render(request, 'pages/dashboard.html', context)
 
 
+@login_required
 def entries(request):
     context = {
         'page': 'records',
@@ -21,6 +24,7 @@ def entries(request):
     return render(request, 'pages/entries.html', context)
 
 
+@login_required
 def recurring_payments(request):
     context = {
         'page': 'records',
@@ -30,6 +34,7 @@ def recurring_payments(request):
     return render(request, 'pages/recurring-payments.html', context)
 
 
+@login_required
 def budgets(request):
     context = {
         'page': 'budgets',
@@ -39,6 +44,7 @@ def budgets(request):
     return render(request, 'pages/budgets.html', context)
 
 
+@login_required
 def accounts(request):
     context = {
         'page': 'accounts',
@@ -48,6 +54,7 @@ def accounts(request):
     return render(request, 'pages/accounts.html', context)
 
 
+@login_required
 def categories(request):
     context = {
         'page': 'categories',

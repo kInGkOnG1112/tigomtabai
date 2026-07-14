@@ -1,6 +1,6 @@
 class AjaxRequest {
 
-    async postRequest(requestURL, formData, submitBtn = null, redirectionURL = '', ){
+    async postRequest(requestURL, formData, submitBtn = null, redirectionURL = '', prompt = true){
         let oldBtnText = ''
 
         if (submitBtn) {
@@ -17,12 +17,14 @@ class AjaxRequest {
                 dataType: "json"
             });
 
-            await Swal.fire({
-                allowOutsideClick: false,
-                title: response.success ? 'Success!' : 'Error!',
-                text: response.message || (response.success ? 'Operation successful.' : 'An error occurred.'),
-                icon: response.success ? "success" : "error",
-            });
+            if (prompt){
+                await Swal.fire({
+                    allowOutsideClick: false,
+                    title: response.success ? 'Success!' : 'Error!',
+                    text: response.message || (response.success ? 'Operation successful.' : 'An error occurred.'),
+                    icon: response.success ? "success" : "error",
+                });
+            }
 
             if (response.success) {
                 window.onbeforeunload = null;

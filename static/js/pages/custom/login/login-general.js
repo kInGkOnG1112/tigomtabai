@@ -53,19 +53,19 @@ var KTLogin = function() {
             e.preventDefault();
 
             validation.validate().then(function(status) {
-		        if (status == 'Valid') {
-                    swal.fire({
-		                text: "All is cool! Now you submit this form",
-		                icon: "success",
-		                buttonsStyling: false,
-		                confirmButtonText: "Ok, got it!",
-                        customClass: {
-    						confirmButton: "btn font-weight-bold btn-light-primary"
-    					}
-		            }).then(function() {
-						location.href = 'profile/dashboard/'
-						KTUtil.scrollTop();
-					});
+		        if (status === 'Valid') {
+					const redirectionURL = ''
+					const signUpForm = $('#kt_login_signin_form')
+					const submitBtn = $(this)
+					const requestURL = 'ajax/login-signin/'
+            		const formData = new FormData(signUpForm[0]);
+					Ajax.postRequest(
+						requestURL,
+						formData,
+						submitBtn,
+						redirectionURL,
+						false
+					)
 				} else {
 					swal.fire({
 		                text: "Sorry, looks like there are some errors detected, please try again.",
@@ -104,10 +104,17 @@ var KTLogin = function() {
 			form,
 			{
 				fields: {
-					fullname: {
+					firstname: {
 						validators: {
 							notEmpty: {
-								message: 'Username is required'
+								message: 'Firstname is required'
+							}
+						}
+					},
+					lastname: {
+						validators: {
+							notEmpty: {
+								message: 'Lastname is required'
 							}
 						}
 					},
@@ -156,22 +163,34 @@ var KTLogin = function() {
 			}
 		);
 
+		//
         $('#kt_login_signup_submit').on('click', function (e) {
             e.preventDefault();
 
             validation.validate().then(function(status) {
-		        if (status == 'Valid') {
-                    swal.fire({
-		                text: "All is cool! Now you submit this form",
-		                icon: "success",
-		                buttonsStyling: false,
-		                confirmButtonText: "Ok, got it!",
-                        customClass: {
-    						confirmButton: "btn font-weight-bold btn-light-primary"
-    					}
-		            }).then(function() {
-						KTUtil.scrollTop();
-					});
+		        if (status === 'Valid') {
+					const redirectionURL = ''
+					const signUpForm = $('#kt_login_signup_form')
+					const submitBtn = $(this)
+					const requestURL = 'ajax/login-signup/'
+            		const formData = new FormData(signUpForm[0]);
+					Ajax.postRequest(
+						requestURL,
+						formData,
+						submitBtn,
+						redirectionURL,
+					).then((response) => {
+						Swal.fire({
+							allowOutsideClick: false,
+							title: response.success ? 'Success!' : 'Error!',
+							text: response.message || (response.success ? 'Operation successful.' : 'An error occurred.'),
+							icon: response.success ? "success" : "error",
+						}).then(function() {
+							if (response.success) {
+								window.location.href = response.url || redirectionURL;
+							}
+						});
+					})
 				} else {
 					swal.fire({
 		                text: "Sorry, looks like there are some errors detected, please try again.",
@@ -227,8 +246,8 @@ var KTLogin = function() {
             e.preventDefault();
 
             validation.validate().then(function(status) {
-		        if (status == 'Valid') {
-                    // Submit form
+		        if (status === 'Valid') {
+
                     KTUtil.scrollTop();
 				} else {
 					swal.fire({

@@ -1,30 +1,10 @@
+import json
 import operator
-import os
-import uuid
-
+from datetime import datetime
 from functools import reduce
 from django.db.models import Q
 from django.urls import reverse
-from django.utils.timezone import now
-# from audit_logging import user_activity_log
-
-
-
-OPTIONAL_FIELD = {
-    'null': True,
-    'blank': True
-}
-
-
-def upload_files_to(instance, filename):
-    filename_base, filename_ext = os.path.splitext(filename)
-    path = instance._meta.model_name
-    new_filename = '{}_{}{}'.format(
-        uuid.uuid4(),
-        now().strftime("%Y%m%d%H%M%S"),
-        filename_ext.lower()
-    )
-    return '{}/{}'.format(path, new_filename)
+from utils.audit_logging import user_activity_log
 
 
 def get_global_context(request, context):
@@ -35,7 +15,6 @@ def get_global_context(request, context):
     for nav in navigations:
         if active_page == nav['id']:
             nav['is_active'] = True
-
 
         filtered_navigations.append(nav)
 
@@ -92,19 +71,25 @@ def get_navigation_items(request):
     return navigations
 
 
-
-
 class GenericResponse:
 
     @staticmethod
-    def error(request, method='', message='', user_message='Unable to process at the moment!', reference_number_list: dict = None):
-        # user_activity_log.save(
-        #     request=request,
-        #     activity_type=method,
-        #     activity_details=message if message else user_message,
-        #     success=False,
-        #     reference_number_list=reference_number_list
-        # )
+    def error(
+        request,
+        user=None,
+        method='',
+        message='',
+        user_message='Unable to process the request as of this moment.',
+        reference_number_list: dict = None
+    ):
+        user_activity_log.save(
+            request=request,
+            user=user,
+            activity_type=method,
+            activity_details=message if message else user_message,
+            success=False,
+            reference_number_list=reference_number_list
+        )
 
         return {
             'success': False,
@@ -113,13 +98,22 @@ class GenericResponse:
         }
 
     @staticmethod
-    def success(request, method='', message='Success!', data=None, redirection=None, reference_number_list: dict = None):
-        # user_activity_log.save(
-        #     request=request,
-        #     activity_type=method,
-        #     activity_details=message,
-        #     reference_number_list=reference_number_list
-        # )
+    def success(
+        request,
+        user=None,
+        method='',
+        message='Success!',
+        data=None,
+        redirection=None,
+        reference_number_list: dict = None
+    ):
+        user_activity_log.save(
+            request=request,
+            user=user,
+            activity_type=method,
+            activity_details=message,
+            reference_number_list=reference_number_list
+        )
         return {
             'success': True,
             'message': message,
@@ -141,3 +135,16 @@ def search_result(queryset, search, orm_lookups):
     combined_query = reduce(operator.or_, or_queries)
 
     return queryset.filter(combined_query)
+
+
+def save_sessions(request, data):
+    if data:
+        request.session['last_login'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        request.session['email'] = request.user.email
+        request.session['first_name'] = request.user.first_name
+        request.session['last_name'] = request.user.last_name
+        request.session['avatar'] = str(json.dumps(str(data.avatar))).replace('"', '')
+    request.session.modified = True
+    return True
+
+

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from utils.helpers import upload_files_to, OPTIONAL_FIELD
+from utils.model_helpers import upload_files_to, OPTIONAL_FIELD
 
 
 class Icons(models.Model):

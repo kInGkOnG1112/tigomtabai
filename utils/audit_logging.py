@@ -16,7 +16,7 @@ class AuditLogging:
 
         self.metadata = request.POST if request.POST else request.GET
         ActivityLog.objects.create(
-            user_profile=user,
+            user=user,
             activity_type=activity_type,
             activity_details=activity_details,
             ip_address=request.META.get('REMOTE_ADDR'),

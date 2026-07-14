@@ -1,6 +1,6 @@
 from django.db import models
 from profiles.models import Profile
-from utils.helpers import upload_files_to, OPTIONAL_FIELD
+from utils.model_helpers import upload_files_to, OPTIONAL_FIELD
 
 
 class CategoryType(models.TextChoices):
