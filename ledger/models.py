@@ -45,6 +45,7 @@ class Category(models.Model):
         choices=CategoryType.choices,
         default=CategoryType.INCOME
     )
+    is_default = models.BooleanField(default=True, **OPTIONAL_FIELD)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -3,10 +3,21 @@ from django.contrib.auth.models import User
 from utils.model_helpers import upload_files_to, OPTIONAL_FIELD
 
 
+class IconType(models.TextChoices):
+    ACCOUNTS = 'ACCOUNTS', 'Accounts'
+    CATEGORIES = 'CATEGORIES', 'Categories'
+    OTHERS = 'OTHERS', 'Others'
+
+
 class Icons(models.Model):
     name = models.CharField(max_length=155, **OPTIONAL_FIELD)
     image = models.ImageField(upload_to=upload_files_to, **OPTIONAL_FIELD)
     is_active = models.BooleanField(default=True, **OPTIONAL_FIELD)
+    type = models.CharField(
+        max_length=20,
+        choices=IconType.choices,
+        default=IconType.OTHERS
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

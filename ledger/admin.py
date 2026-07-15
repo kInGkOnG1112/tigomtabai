@@ -1,4 +1,5 @@
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 from .models import (
     Account,
     Category,
@@ -7,7 +8,7 @@ from .models import (
 
 
 @admin.register(Account)
-class AccountAdmin(admin.ModelAdmin):
+class AccountAdmin(ModelAdmin):
     raw_id_fields = ('profile',)
     search_fields = ('name',)
     list_display = (
@@ -20,7 +21,7 @@ class AccountAdmin(admin.ModelAdmin):
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(ModelAdmin):
     raw_id_fields = ('icon',)
     search_fields = ('name',)
     list_display = (
@@ -31,7 +32,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Record)
-class RecordAdmin(admin.ModelAdmin):
+class RecordAdmin(ModelAdmin):
     raw_id_fields = (
         'account_from',
         'account_to',

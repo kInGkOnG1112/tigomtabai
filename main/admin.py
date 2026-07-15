@@ -1,8 +1,9 @@
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 from .models import Icons
 
 
 @admin.register(Icons)
-class IconAdmin(admin.ModelAdmin):
+class IconAdmin(ModelAdmin):
     search_fields = ('name', )
-    list_display = ('name', 'is_active', 'created_at')
+    list_display = ('name', 'type', 'is_active', 'created_at')
