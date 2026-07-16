@@ -1,6 +1,6 @@
+from django.contrib.auth.models import User
 from django.db import models
-from profiles.models import Profile
-from utils.model_helpers import upload_files_to, OPTIONAL_FIELD
+from utils.model_helpers import OPTIONAL_FIELD
 
 
 class CategoryType(models.TextChoices):
@@ -15,14 +15,19 @@ class RecordType(models.TextChoices):
 
 
 class Account(models.Model):
-    profile = models.ForeignKey(
-        Profile,
+    owner = models.ForeignKey(
+        User,
         on_delete=models.CASCADE,
-        related_name='accounts'
+        related_name='owner_user'
     )
     name = models.CharField(max_length=255)
-    initial_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    icon = models.ImageField(upload_to=upload_files_to, **OPTIONAL_FIELD)
+    description = models.TextField(max_length=500, **OPTIONAL_FIELD)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    icon = models.ForeignKey(
+        'main.Icons',
+        on_delete=models.DO_NOTHING,
+        related_name='account_icon'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -45,6 +50,7 @@ class Category(models.Model):
         choices=CategoryType.choices,
         default=CategoryType.INCOME
     )
+    is_active = models.BooleanField(default=True, **OPTIONAL_FIELD)
     is_default = models.BooleanField(default=True, **OPTIONAL_FIELD)
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -14,7 +14,7 @@ from utils.helpers import GenericResponse
 
 @require_POST
 def login_signin(request):
-    method = 'Signin'
+    method = 'Sign in'
     try:
         data = request.POST
         username = data.get('username')
@@ -82,7 +82,7 @@ def login_signin(request):
 
 @require_POST
 def login_signup(request):
-    method = 'Signup'
+    method = 'Sign up'
     try:
         data = request.POST
         email = data.get('email', '')

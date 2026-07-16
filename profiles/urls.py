@@ -15,18 +15,21 @@ urlpatterns_views = [
 urlpatterns_subpages = []
 
 urlpatterns_table_subpages = [
-    path('subpage/category-list/', subpage.category_list, name='subpage_category_list')
+    path('subpage/category-list/', subpage.category_list, name='subpage_category_list'),
+    path('subpage/account-list/', subpage.account_list, name='subpage_account_list')
 ]
 
 urlpatterns_ajax = [
     path('ajax/add-category/', ajax.add_category, name='ajax_add_category'),
     path('ajax/update-category/', ajax.update_category, name='ajax_update_category'),
 
+    path('ajax/add-account/', ajax.add_account, name='ajax_add_account'),
 ]
 
 urlpatterns_modals = [
     path('modals/category/add/', modals.add_category, name='modal_add_category'),
-    path('modals/category/update/<int:id>/', modals.update_category, name='modal_update_category')
+    path('modals/category/update/<int:id>/', modals.update_category, name='modal_update_category'),
+    path('modals/account/add/', modals.add_account, name='modal_add_account'),
 ]
 
 

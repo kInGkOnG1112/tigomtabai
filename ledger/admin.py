@@ -1,5 +1,10 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
+from unfold.paginator import InfinitePaginator
+from unfold.contrib.filters.admin import (
+    ChoicesDropdownFilter,
+    BooleanRadioFilter
+)
 from .models import (
     Account,
     Category,
@@ -9,25 +14,35 @@ from .models import (
 
 @admin.register(Account)
 class AccountAdmin(ModelAdmin):
-    raw_id_fields = ('profile',)
+    raw_id_fields = ('owner',)
     search_fields = ('name',)
     list_display = (
-        'profile',
+        'owner',
         'name',
-        'initial_balance',
+        'balance',
         'created_at'
     )
-    list_filter = ('profile',)
+    list_filter = ('owner',)
 
 
 @admin.register(Category)
 class CategoryAdmin(ModelAdmin):
+    paginator = InfinitePaginator
+    list_filter_submit = True
+    list_per_page = 15
+
     raw_id_fields = ('icon',)
     search_fields = ('name',)
     list_display = (
         'name',
         'type',
+        'is_active',
+        'is_default',
         'created_at'
+    )
+    list_filter = (
+        ('is_active', BooleanRadioFilter),
+        ('type', ChoicesDropdownFilter)
     )
 
 

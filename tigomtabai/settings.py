@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 
+from django.urls import reverse_lazy
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.normpath(os.path.dirname(__file__))
@@ -32,12 +34,14 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'unfold',
+    'unfold.contrib.filters',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'ledger.apps.LedgerConfig',
     'main.apps.MainConfig',
     'profiles.apps.ProfilesConfig'
@@ -126,6 +130,15 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+
+UNFOLD = {
+    "SITE_TITLE": "TigomTaBai Admin",
+    "SITE_HEADER": "TigomTaBai",
+    "SITE_SUBHEADER": "Management & Admin Portal",
+    "SIDEBAR": {
+        "show_search": True
+    },
+}
 
 MAX_PASSWORD_HISTORY = 8
 LOGIN_FAILED_LIMIT = 5

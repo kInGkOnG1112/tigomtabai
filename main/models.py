@@ -37,7 +37,7 @@ class ActivityLog(models.Model):
     success = models.BooleanField(default=False)
     reference_number_list = models.JSONField(**OPTIONAL_FIELD)
     metadata = models.JSONField(**OPTIONAL_FIELD)
-    timestamp = models.DateTimeField(**OPTIONAL_FIELD)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-pk']

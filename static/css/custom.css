@@ -9,3 +9,11 @@
     border-color: #3445E5 !important;
     cursor: pointer;
 }
+
+.select2-container--open {
+    z-index: 99999 !important;
+}
+
+.select2-modal .select2-container {
+    width: 100%!important;
+}

@@ -84,7 +84,7 @@ class GenericResponse:
     ):
         user_activity_log.save(
             request=request,
-            user=user,
+            user=user if user else request.user if request.user else None,
             activity_type=method,
             activity_details=message if message else user_message,
             success=False,
@@ -109,7 +109,7 @@ class GenericResponse:
     ):
         user_activity_log.save(
             request=request,
-            user=user,
+            user=user if user else request.user if request.user else None,
             activity_type=method,
             activity_details=message,
             reference_number_list=reference_number_list

@@ -4,7 +4,7 @@ from django.views.decorators.http import require_POST
 
 from utils.decorators import login_required
 from utils.helpers import GenericResponse
-from ledger.models import Category
+from ledger.models import Category, Account
 from main.models import Icons
 
 
@@ -74,6 +74,36 @@ def update_category(request):
 
     except Exception as e:
         print(str(e))
+        return JsonResponse(GenericResponse.error(
+            request=request,
+            method=method,
+            message=str(e),
+        ))
+
+
+@login_required
+@require_POST
+def add_account(request):
+    method = 'Add Account'
+    try:
+        data = request.POST
+        with transaction.atomic():
+            icon = Icons.objects.filter(id=data.get('institution')).first()
+            Account.objects.create(
+                icon=icon,
+                owner=request.user,
+                name=data.get('name', ''),
+                description=data.get('description', ''),
+                balance=float(data.get('balance', 0).replace(',', ''))
+            )
+
+        return JsonResponse(GenericResponse.success(
+            request=request,
+            method=method,
+            message='Account successfully added'
+        ))
+
+    except Exception as e:
         return JsonResponse(GenericResponse.error(
             request=request,
             method=method,

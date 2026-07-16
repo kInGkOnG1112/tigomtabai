@@ -8,7 +8,7 @@ from utils.decorators import login_required
 def add_category(request):
     icons = Icons.objects.filter(is_active=True)
     context = {
-        'icons': icons
+        "icons": icons
     }
     return render(request, template_name="screens/modals/add-category.html", context=context)
 
@@ -18,7 +18,19 @@ def update_category(request, id):
     category = Category.objects.get(id=id)
     icons = Icons.objects.filter(is_active=True)
     context = {
-        'icons': icons,
-        'category': category
+        "icons": icons,
+        "category": category
     }
     return render(request, template_name="screens/modals/update-category.html", context=context)
+
+
+@login_required
+def add_account(request):
+    icons = Icons.objects.filter(
+        is_active=True,
+        type='ACCOUNTS'
+    )
+    context = {
+        "icons": icons
+    }
+    return render(request, template_name="screens/modals/add-account.html", context=context)

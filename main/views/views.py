@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from profiles.models import Profile
+from utils.audit_logging import user_activity_log
 from utils.helpers import save_sessions
 
 
@@ -21,5 +22,11 @@ def login(request):
 
 
 def logout_user(request):
+    user_activity_log.save(
+        request=request,
+        user=request.user,
+        activity_type='Sign out',
+        activity_details='User logged out'
+    )
     logout(request)
     return HttpResponseRedirect('/')
