@@ -109,3 +109,37 @@ def add_account(request):
             method=method,
             message=str(e),
         ))
+
+
+@login_required
+@require_POST
+def update_account(request):
+    method = 'Update Account'
+    try:
+        data = request.POST
+
+        with transaction.atomic():
+            account = Account.objects.get(id=data.get('id'))
+
+            boolean_fields = ['is_lock', 'is_archived', 'is_favorite']
+            for field in boolean_fields:
+                if field in request.POST:
+                    is_true = request.POST.get(field) == 'True'
+                    setattr(account, field, is_true)
+
+            account.description = data.get('description', account.description)
+            account.save()
+
+        return JsonResponse(GenericResponse.success(
+            request=request,
+            method=method,
+            message='Account successfully updated'
+        ))
+
+    except Exception as e:
+        print(str(e))
+        return JsonResponse(GenericResponse.error(
+            request=request,
+            method=method,
+            message=str(e),
+        ))

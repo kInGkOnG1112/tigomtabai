@@ -23,6 +23,9 @@ class Account(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(max_length=500, **OPTIONAL_FIELD)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    is_lock = models.BooleanField(default=False, **OPTIONAL_FIELD)
+    is_favorite = models.BooleanField(default=False, **OPTIONAL_FIELD)
+    is_archived = models.BooleanField(default=False, **OPTIONAL_FIELD)
     icon = models.ForeignKey(
         'main.Icons',
         on_delete=models.DO_NOTHING,
@@ -34,7 +37,7 @@ class Account(models.Model):
         ordering = ['-pk']
 
     def __str__(self):
-        return f"{self.name} ({self.profile.user.username if hasattr(self.profile, 'user') else self.profile.pk})"
+        return f"{self.name}"
 
 
 class Category(models.Model):

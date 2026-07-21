@@ -24,6 +24,7 @@ urlpatterns_ajax = [
     path('ajax/update-category/', ajax.update_category, name='ajax_update_category'),
 
     path('ajax/add-account/', ajax.add_account, name='ajax_add_account'),
+    path('ajax/update-account/', ajax.update_account, name='ajax_update_account'),
 ]
 
 urlpatterns_modals = [

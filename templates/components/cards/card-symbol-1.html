@@ -1,16 +1,31 @@
 {% load humanize %}
+{% load static %}
 {% for data in data_list %}
     <div class="{{ col_class }}">
-        <div class="card card-custom gutter-b card-stretch">
-            <div class="card-body d-flex flex-column">
+        <div class="card card-custom bgi-no-repeat bgi-no-repeat bgi-size-cover gutter-b card-stretch {% if data.is_archived %}archive-image{% endif %} " id="cardAccount{{ data.id }}">
+            <div class="card-body d-flex flex-column ribbon ribbon-top ribbon-ver">
                 <div class="d-flex mb-5 align-items-center">
                     <div class="flex-shrink-0 mr-4 symbol symbol-circle symbol-60 border border-2 border-light">
                         <img src="{{ data.icon.image.url }}" alt="image" />
                     </div>
                     <div class="d-flex flex-column mr-auto">
                         <div class="d-flex flex-column mr-auto">
-                            <a href="#" class="text-dark text-hover-primary font-size-h4 font-weight-bolder mb-1">{{ data.name }}</a>
-                            <span class="text-muted font-weight-bold">{{ data.icon.name }}</span>
+                            <a href="#" class="text-dark text-hover-primary font-size-h4 font-weight-bolder mb-1">
+                                {{ data.name }}
+                                <span id="iconFavorite{{ data.id }}">
+                                {% if data.is_favorite %}
+                                <i class="flaticon2-correct text-success icon-md ml-2"></i>
+                                {% endif %}
+                                </span>
+                            </a>
+                            <span class="text-muted font-weight-bold">
+                                {{ data.icon.name }}
+                                <span id="iconLock{{ data.id }}">
+                                {% if data.is_lock %}
+                                <i class="icon-nm fas fa-lock text-muted ml-1"></i>
+                                {% endif %}
+                                </span>
+                            </span>
                         </div>
                     </div>
                     <div class="card-toolbar mb-7">
@@ -21,38 +36,39 @@
                             <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
                                 <ul class="navi navi-hover">
                                     <li class="navi-header pb-1">
-                                        <span class="text-primary text-uppercase font-weight-bold font-size-sm">Add new:</span>
+                                        <span class="text-primary text-uppercase font-weight-bold font-size-sm">Options:</span>
                                     </li>
                                     <li class="navi-item">
-                                        <a href="#" class="navi-link">
+                                        <a href="#" class="navi-link"
+                                           onclick="lockUnlockAccount(this)"
+                                           data-id="{{ data.id }}"
+                                           data-is_locked="{{ data.is_lock }}">
                                             <span class="navi-icon">
-                                                <i class="flaticon2-shopping-cart-1"></i>
+                                                <i class="flaticon2-lock"></i>
                                             </span>
-                                            <span class="navi-text">Order</span>
+                                            <span class="navi-text">{{ data.is_lock|yesno:"Unlock,Lock" }} Account</span>
                                         </a>
                                     </li>
                                     <li class="navi-item">
-                                        <a href="#" class="navi-link">
+                                        <a href="#" class="navi-link"
+                                           onclick="addToArchives(this)"
+                                           data-id="{{ data.id }}"
+                                           data-is_archived="{{ data.is_archived }}">
                                             <span class="navi-icon">
-                                                <i class="flaticon2-calendar-8"></i>
+                                                <i class="flaticon2-google-drive-file"></i>
                                             </span>
-                                            <span class="navi-text">Event</span>
+                                            <span class="navi-text">{{ data.is_archived|yesno:"Remove from,Add to" }} Archive</span>
                                         </a>
                                     </li>
                                     <li class="navi-item">
-                                        <a href="#" class="navi-link">
-                                            <span class="navi-icon">
-                                                <i class="flaticon2-graph-1"></i>
-                                            </span>
-                                            <span class="navi-text">Report</span>
-                                        </a>
-                                    </li>
-                                    <li class="navi-item">
-                                        <a href="#" class="navi-link">
+                                        <a href="#" class="navi-link"
+                                           onclick="addToFavorite(this)"
+                                           data-id="{{ data.id }}"
+                                           data-is_favorite="{{ data.is_favorite }}">
                                             <span class="navi-icon">
                                                 <i class="flaticon2-rocket-1"></i>
                                             </span>
-                                            <span class="navi-text">Post</span>
+                                            <span class="navi-text">{{ data.is_favorite|yesno:"Remove from,Add to" }} Favorite</span>
                                         </a>
                                     </li>
                                     <li class="navi-item">
@@ -60,7 +76,15 @@
                                             <span class="navi-icon">
                                                 <i class="flaticon2-writing"></i>
                                             </span>
-                                            <span class="navi-text">File</span>
+                                            <span class="navi-text">View Details</span>
+                                        </a>
+                                    </li>
+                                    <li class="navi-item">
+                                        <a href="#" class="navi-link">
+                                            <span class="navi-icon">
+                                                <i class="flaticon2-graph-1"></i>
+                                            </span>
+                                            <span class="navi-text">Generate Report</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -68,7 +92,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-auto">
+                <div class="mt-auto " >
                     <p class="mb-7">{{ data.description|truncatechars:100 }}</p>
                     <div class="mb-7">
                         <div class="d-flex justify-content-between align-items-cente my-1">
@@ -80,7 +104,7 @@
                             <span class="text-muted font-weight-bold">{{ data.latest_transaction|default:'----' }}</span>
                         </div>
                     </div>
-                    <a href="#" class="btn btn-block btn-sm btn-light-success font-weight-bolder text-uppercase py-4">view account</a>
+                    <a href="#" id="viewDetails{{ data.id }}" class="btn btn-block btn-sm {% if data.is_archived %}btn-secondary{% else %}btn-light-success{% endif %}  font-weight-bolder text-uppercase py-4">view account</a>
                 </div>
             </div>
 

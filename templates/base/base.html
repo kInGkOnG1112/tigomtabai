@@ -143,6 +143,20 @@
 
                 return state.text;
             }
+            function swalWarningConfig(config) {
+                return {
+                    title: config.actionText ? config.actionText : 'Warning',
+                    text: config.bodyText ? config.bodyText : 'Are you sure to take this action?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: config.confirmButtonText ? config.confirmButtonText : 'Proceed',
+                    customClass: {
+                        confirmButton: "btn btn-primary font-weight-bold px-6",
+                        cancelButton: "btn btn-light-danger font-weight-bold px-6"
+                    },
+                    buttonsStyling: false
+                }
+            }
         </script>
 
         {% block script %}

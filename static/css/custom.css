@@ -17,3 +17,9 @@
 .select2-modal .select2-container {
     width: 100%!important;
 }
+
+.archive-image {
+    background-image: url(/static/img/gray-archived.png)!important;
+    background-size: contain!important;
+    background-position: center!important;
+}
