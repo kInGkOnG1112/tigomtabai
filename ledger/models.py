@@ -4,21 +4,21 @@ from utils.model_helpers import OPTIONAL_FIELD
 
 
 class CategoryType(models.TextChoices):
-    EXPENSE = 'EXPENSE', 'Expense'
-    INCOME = 'INCOME', 'Income'
+    EXPENSE = "EXPENSE", "Expense"
+    INCOME = "INCOME", "Income"
 
 
 class RecordType(models.TextChoices):
-    EXPENSE = 'EXPENSE', 'Expense'
-    INCOME = 'INCOME', 'Income'
-    TRANSFER = 'TRANSFER', 'Transfer'
+    EXPENSE = "EXPENSE", "Expense"
+    INCOME = "INCOME", "Income"
+    TRANSFER = "TRANSFER", "Transfer"
 
 
 class Account(models.Model):
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='owner_user'
+        related_name="owner_user"
     )
     name = models.CharField(max_length=255)
     description = models.TextField(max_length=500, **OPTIONAL_FIELD)
@@ -27,14 +27,15 @@ class Account(models.Model):
     is_favorite = models.BooleanField(default=False, **OPTIONAL_FIELD)
     is_archived = models.BooleanField(default=False, **OPTIONAL_FIELD)
     icon = models.ForeignKey(
-        'main.Icons',
+        "main.Icons",
         on_delete=models.DO_NOTHING,
-        related_name='account_icon'
+        related_name="account_icon"
     )
+    latest_transaction_date = models.DateField(**OPTIONAL_FIELD)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-pk']
+        ordering = ["-pk"]
 
     def __str__(self):
         return f"{self.name}"
@@ -43,9 +44,9 @@ class Account(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=150)
     icon = models.ForeignKey(
-        'main.Icons',
+        "main.Icons",
         on_delete=models.DO_NOTHING,
-        related_name='category_icon'
+        related_name="category_icon"
     )
     description = models.TextField(max_length=500, **OPTIONAL_FIELD)
     type = models.CharField(
@@ -58,7 +59,7 @@ class Category(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-pk']
+        ordering = ["-pk"]
         verbose_name_plural = "Categories"
 
     def __str__(self):
@@ -66,22 +67,25 @@ class Category(models.Model):
 
 
 class Record(models.Model):
+    reference_number = models.CharField(max_length=200, **OPTIONAL_FIELD)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     account_from = models.ForeignKey(
         Account,
         on_delete=models.CASCADE,
-        related_name='outgoing_records'
+        related_name="outgoing_records",
+        **OPTIONAL_FIELD
     )
     account_to = models.ForeignKey(
         Account,
         on_delete=models.CASCADE,
-        related_name='incoming_records',
+        related_name="incoming_records",
         **OPTIONAL_FIELD
     )
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
-        related_name='records'
+        related_name="records",
+        **OPTIONAL_FIELD
     )
     notes = models.TextField(max_length=250, **OPTIONAL_FIELD)
     type = models.CharField(
@@ -90,16 +94,17 @@ class Record(models.Model):
         default=RecordType.INCOME
     )
     merchant = models.CharField(max_length=150, **OPTIONAL_FIELD)
-    transaction_date = models.DateField(**OPTIONAL_FIELD)
+    transaction_date = models.DateTimeField(**OPTIONAL_FIELD)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         indexes = [
-            models.Index(fields=['account_from', 'category']),
-            models.Index(fields=['transaction_date']),
+            models.Index(fields=["account_from", "category"]),
+            models.Index(fields=["transaction_date"]),
+            models.Index(fields=["reference_number"]),
         ]
-        ordering = ['-pk']
+        ordering = ["-pk"]
 
     def __str__(self):
         return f"{self.type} - {self.amount} ({self.transaction_date})"

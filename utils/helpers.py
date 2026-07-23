@@ -1,9 +1,13 @@
 import json
 import operator
+import secrets
+import string
 from datetime import datetime
 from functools import reduce
 from django.db.models import Q
 from django.urls import reverse
+
+from ledger.models import Record
 from utils.audit_logging import user_activity_log
 
 
@@ -33,14 +37,14 @@ def get_navigation_items(request):
             'url': reverse('profile:dashboard'),
         },
         {
-            'menu_name': 'Records',
+            'menu_name': 'Ledger',
             'id': 'records',
             'sub_items': [
                 {
-                    'menu_name': 'Entries',
-                    'id': 'entries',
-                    'url': reverse('profile:entries'),
-                    'icon': 'components/icons/svg/entries.html'
+                    'menu_name': 'Records',
+                    'id': 'records',
+                    'url': reverse('profile:records'),
+                    'icon': 'components/icons/svg/records.html'
                 },
 
                 {
@@ -147,4 +151,30 @@ def save_sessions(request, data):
     request.session.modified = True
     return True
 
+
+def generate_unique_ref(
+    length=8,
+    prefix="REF-",
+    model=Record,
+    field_name="reference_number",
+):
+    """Generates a unique reference number with configurable length and prefix.
+
+    - length: Total number of random characters (excluding prefix)
+    - prefix: String prepended to the reference (e.g., "REF-", "TXN-")
+    - model: Django Model class to check against for uniqueness
+    - field_name: Model field name storing the reference
+    """
+    allowed_chars = string.ascii_uppercase + string.digits
+    allowed_chars = allowed_chars.translate(str.maketrans("", "", "0O1I"))
+
+    while True:
+        random_str = "".join(
+            secrets.choice(allowed_chars) for _ in range(length)
+        )
+        ref_code = f"{prefix}{random_str}"
+
+        lookup = {field_name: ref_code}
+        if not model.objects.filter(**lookup).exists():
+            return ref_code
 

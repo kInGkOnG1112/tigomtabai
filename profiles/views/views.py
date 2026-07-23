@@ -15,13 +15,14 @@ def dashboard(request):
 
 
 @login_required
-def entries(request):
+def records(request):
     context = {
         'page': 'records',
-        'title': 'Entries'
+        'title': 'Ledger',
+        'subheader': 'Records'
     }
     context = get_global_context(request, context)
-    return render(request, 'pages/entries.html', context)
+    return render(request, 'pages/records.html', context)
 
 
 @login_required

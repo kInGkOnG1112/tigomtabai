@@ -119,6 +119,7 @@
                 const $element = $(state.element);
                 const iconClass = $element.data('icon');
                 const imgPath = $element.data('image');
+                const lowerText = $element.data('lower_text');
 
                 if (iconClass) {
                     return $(`
@@ -129,13 +130,15 @@
                 }
 
                 if (imgPath) {
+                    const lower = lowerText ? `<span class="text-muted font-size-sm mb-1">${lowerText}</span>` : ''
                     return $(`
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center ">
                             <div class="flex-shrink-0 mr-4 symbol symbol-25 ">
                                 <img src="${imgPath}" alt="${state.text}">
                             </div>
                             <div class="d-flex flex-column mr-auto">
-                                <span class="font-weight-bold mb-1">${state.text}</span>
+                                <span class="font-weight-bold mt-1">${state.text}</span>
+                                ${lower}
                             </div>
                         </div>
                     `);

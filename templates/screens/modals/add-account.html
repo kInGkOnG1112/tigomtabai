@@ -44,7 +44,7 @@
 <script src="{% static 'js/autonumeric.js' %}"></script>
 <script>
     $(document).ready(function() {
-        
+
         $('#kt_select2_1').select2({
             placeholder: "Select an institution",
             templateResult: formatState,
@@ -57,7 +57,7 @@
             const redirectionURL = 'flag_redirection'
             const closeBtn = $('#closeBtn')
             const submitBtn = $('#submitBtn')
-            const requestURL = '{% url 'profile:ajax_add_account' %}'
+            const requestURL = '{% url 'ledger:ajax_add_account' %}'
             const formData = new FormData(addAccountForm[0]);
             Ajax.postRequest(
                 requestURL,

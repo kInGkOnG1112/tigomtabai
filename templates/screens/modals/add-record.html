@@ -1,0 +1,315 @@
+{% load static %}
+{% load humanize %}
+<form id="addRecordForm" method="POST" action="">
+    {% csrf_token %}
+    <input type="hidden" name="record_type" id="record_type" value="income">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Record</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i aria-hidden="true" class="ki ki-close"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+         <div class="card-toolbar mb-5">
+           <ul class="nav nav-light-dark nav-bold nav-pills" id="recordTypeTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#kt_tab_pane_5_1" data-type="income">
+                        <span class="nav-icon"><i class="flaticon2-plus-1"></i></span>
+                        <span class="nav-text">Income</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#kt_tab_pane_5_2" data-type="expense">
+                        <span class="nav-icon"><i class="flaticon2-pie-chart"></i></span>
+                        <span class="nav-text">Expense</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#kt_tab_pane_5_3" data-type="transfer">
+                        <span class="nav-icon"><i class="flaticon2-graphic-design"></i></span>
+                        <span class="nav-text">Transfer</span>
+                    </a>
+                </li>
+           </ul>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="kt_tab_pane_5_1" role="tabpanel" aria-labelledby="kt_tab_pane_5_1">
+                <div class="row justify-content-center">
+                    <div class="col-lg-12 mt-2">
+                        <div class="form-group form-group-last">
+                            <div class="alert alert-custom alert-default" role="alert">
+                                <div class="alert-icon">
+                                    <span class="svg-icon svg-icon-warning svg-icon-xl">
+                                        {% include 'components/icons/svg/warning-2.html' %}
+                                    </span>
+                                </div>
+                                <div class="alert-text">Any actions submitted through this form will be permanently saved and tagged as an <strong>Income</strong> record in the <strong>ledger</strong>.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5 select2-modal">
+                            <label for="income_category">Category: <span class="text-danger">*</span></label>
+                            <select class="form-control select2 category-selection" id="income_category" name="income_category">
+                                {% for category in income_category %}
+                                    <option value="{{ category.id }}"
+                                            data-image="{{ category.icon.image.url }}"
+                                            data-lower_text="{{ category.type|title }}">{{ category.name|title }}</option>
+                                {% endfor %}
+                             </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5 select2-modal">
+                            <label for="income_account">Account: <span class="text-danger">*</span></label>
+                            <select class="form-control select2 account-selection" id="income_account" name="income_account">
+                                {% for account in accounts %}
+                                    <option value="{{ account.id }}"
+                                            data-image="{{ account.icon.image.url }}"
+                                            data-lower_text="Bal: ₱{{ account.balance|floatformat:2|intcomma }}">
+                                        {{ account.name|title }}</option>
+                                {% endfor %}
+                             </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5">
+                            <label for="income_amount">Amount: <span class="text-danger">*</span></label>
+                            <input type="text" id="income_amount" name="income_amount" class="form-control amount required-field" placeholder="0.00" inputmode="decimal"/>
+                            <span class="form-text text-muted">Amount to be deposited into the selected account</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5">
+                            <label for="income_tdt">Transaction date & time: </label>
+                            <div class="input-group date kt_datetimepicker" id="kt_datetimepicker_income" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" placeholder="Select date & time"  id="income_tdt" name="income_tdt" data-target="#kt_datetimepicker_income"/>
+                                <div class="input-group-append" data-target="#kt_datetimepicker_income" data-toggle="datetimepicker">
+                                    <span class="input-group-text">
+                                        <i class="ki ki-calendar"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <span class="form-text text-muted">Expected format: MM/DD/YYYY 12:00 AM</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="income_notes">Notes:</label>
+                            <textarea id="income_notes" name="income_notes" class="form-control" rows="4" placeholder="Ex. Payroll for the month of .." maxlength="300"></textarea>
+                       </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="kt_tab_pane_5_2" role="tabpanel" aria-labelledby="kt_tab_pane_5_2">
+                <div class="row justify-content-center">
+                    <div class="col-lg-12 mt-2">
+                        <div class="form-group form-group-last">
+                            <div class="alert alert-custom alert-default" role="alert">
+                                <div class="alert-icon">
+                                    <span class="svg-icon svg-icon-warning svg-icon-xl">
+                                        {% include 'components/icons/svg/warning-2.html' %}
+                                    </span>
+                                </div>
+                                <div class="alert-text">Any actions submitted through this form will be permanently saved and tagged as an <strong>Expense</strong> record in the <strong>ledger</strong>.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5 select2-modal">
+                            <label for="expense_category">Category: <span class="text-danger">*</span></label>
+                            <select class="form-control select2 category-selection" id="expense_category" name="expense_category">
+                                {% for category in expense_category %}
+                                    <option value="{{ category.id }}"
+                                            data-image="{{ category.icon.image.url }}"
+                                            data-lower_text="{{ category.type|title }}">{{ category.name|title }}</option>
+                                {% endfor %}
+                             </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5 select2-modal">
+                            <label for="expense_account">Account: <span class="text-danger">*</span></label>
+                            <select class="form-control select2 account-selection" id="expense_account" name="expense_account">
+                                {% for account in accounts %}
+                                    <option value="{{ account.id }}"
+                                            data-image="{{ account.icon.image.url }}"
+                                            data-lower_text="Bal: ₱{{ account.balance|floatformat:2|intcomma }}">
+                                        {{ account.name|title }}</option>
+                                {% endfor %}
+                             </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5">
+                            <label for="expense_amount">Amount: <span class="text-danger">*</span></label>
+                            <input type="text" id="expense_amount" name="expense_amount" class="form-control amount required-field" placeholder="0.00" inputmode="decimal"/>
+                            <span class="form-text text-muted">Amount to be deducted into the selected account</span>
+                       </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5">
+                            <label for="income_tdt">Transaction date & time: </label>
+                            <div class="input-group date kt_datetimepicker" id="kt_datetimepicker_expense" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" placeholder="MM/DD/YYYY HH:MM AM/PM" id="expense_tdt" name="expense_tdt" data-target="#kt_datetimepicker_expense"/>
+                                <div class="input-group-append" data-target="#kt_datetimepicker_expense" data-toggle="datetimepicker">
+                                    <span class="input-group-text">
+                                        <i class="ki ki-calendar"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <span class="form-text text-muted">Expected format: MM/DD/YYYY 12:00 AM</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 ">
+                        <div class="form-group mb-3">
+                            <label for="expense_notes">Notes:</label>
+                            <textarea id="expense_notes" name="expense_notes" class="form-control" rows="4" placeholder="Ex. Dine at McDonald's" maxlength="300"></textarea>
+                       </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="kt_tab_pane_5_3" role="tabpanel" aria-labelledby="kt_tab_pane_5_3">
+                <div class="row justify-content-center">
+                    <div class="col-lg-12 mt-2">
+                        <div class="form-group form-group-last">
+                            <div class="alert alert-custom alert-default" role="alert">
+                                <div class="alert-icon">
+                                    <span class="svg-icon svg-icon-warning svg-icon-xl">
+                                        {% include 'components/icons/svg/warning-2.html' %}
+                                    </span>
+                                </div>
+                                <div class="alert-text text-sm">Any actions submitted through this form will be permanently saved and tagged as an <strong>Account Transfer</strong> record in the <strong>ledger</strong>.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5 select2-modal">
+                            <label for="account_from">Source Account: <span class="text-danger">*</span></label>
+                            <select class="form-control select2 account-selection" id="account_from" name="account_from">
+                                {% for account in accounts %}
+                                    <option value="{{ account.id }}"
+                                            data-image="{{ account.icon.image.url }}"
+                                            data-lower_text="Bal: ₱{{ account.balance|floatformat:2|intcomma }}"
+                                            {% if forloop.counter == 1 %}selected{% endif %} >
+                                        {{ account.name|title }}</option>
+                                {% endfor %}
+                             </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5 select2-modal">
+                            <label for="account_to">Destination Account: <span class="text-danger">*</span></label>
+                            <select class="form-control select2 account-selection" id="account_to" name="account_to">
+                                {% for account in accounts %}
+                                    <option value="{{ account.id }}"
+                                            data-image="{{ account.icon.image.url }}"
+                                            data-lower_text="Bal: ₱{{ account.balance|floatformat:2|intcomma }}"
+                                            {% if forloop.counter == 2 %}selected{% endif %}>
+                                        {{ account.name|title }}</option>
+                                {% endfor %}
+                             </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5">
+                            <label for="transfer_amount">Amount to transfer: <span class="text-danger">*</span></label>
+                            <input type="text" id="transfer_amount" name="transfer_amount" class="form-control amount required-field" placeholder="0.00" inputmode="decimal"/>
+                            <span class="form-text text-muted">Amount to be transferred into the destination account</span>
+                       </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5">
+                            <label for="income_tdt">Transaction date & time: </label>
+                            <div class="input-group date kt_datetimepicker" id="kt_datetimepicker_transfer" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" placeholder="MM/DD/YYYY HH:MM AM/PM" id="transfer_tdt" name="transfer_tdt" data-target="#kt_datetimepicker_transfer"/>
+                                <div class="input-group-append" data-target="#kt_datetimepicker_transfer" data-toggle="datetimepicker">
+                                    <span class="input-group-text">
+                                        <i class="ki ki-calendar"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <span class="form-text text-muted">Expected format: MM/DD/YYYY 12:00 AM</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="transfer_notes">Notes:</label>
+                            <textarea id="transfer_notes" name="transfer_notes" class="form-control" rows="4" placeholder="Ex. For monthly allowance allocation" maxlength="300"></textarea>
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="closeBtn" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Cancel</button>
+        <button type="submit" id="submitBtn" class="btn btn-primary font-weight-bold">Submit</button>
+    </div>
+</form>
+<script src="{% static 'js/autonumeric.js' %}"></script>
+<script>
+    $(document).ready(function() {
+
+        $('.kt_datetimepicker').datetimepicker({
+            locale: 'ph',
+            ignoreReadonly: true,
+            defaultDate: moment(), 
+            useCurrent: true
+        });
+
+        function updateRequiredFields() {
+            $('.tab-pane input, .tab-pane select, .tab-pane textarea').each(function () {
+                $(this).removeAttr('required');
+                $(this).prop('required', false);
+            });
+
+            var $activePane = $('.tab-content .tab-pane.active');
+            $activePane.find('.required-field').each(function () {
+                $(this).attr('required', 'required');
+                $(this).prop('required', true);
+            });
+        }
+
+        updateRequiredFields();
+
+        $('#recordTypeTabs a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            const type = $(e.target).data('type');
+            $('#record_type').val(type);
+
+            updateRequiredFields();
+        });
+
+        $('.category-selection').select2({
+            placeholder: "Select Category",
+            templateResult: formatState,
+            templateSelection: formatState,
+        });
+
+        $('.account-selection').select2({
+            placeholder: "Select Account",
+            templateResult: formatState,
+            templateSelection: formatState,
+        });
+
+        const addRecordForm = $('#addRecordForm')
+        addRecordForm.submit(function (e) {
+            e.preventDefault()
+            const redirectionURL = 'flag_redirection'
+            const closeBtn = $('#closeBtn')
+            const submitBtn = $('#submitBtn')
+            const requestURL = '{% url 'ledger:ajax_add_record' %}'
+            const formData = new FormData(addRecordForm[0]);
+            Ajax.postRequest(
+                requestURL,
+                formData,
+                submitBtn,
+                redirectionURL,
+            ).then(function (response) {
+                if (response.success){
+                    closeBtn.click()
+                }
+            })
+        })
+    });
+</script>

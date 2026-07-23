@@ -10,7 +10,7 @@
         <div class="d-flex align-items-center flex-wrap mr-2">
             <h5 class="text-dark font-weight-bold mt-2 mb-2 mr-5">{{ title }}</h5>
             <div class="subheader-separator subheader-separator-ver mt-2 mb-2 mr-4 bg-gray-200"></div>
-            {% url 'profile:modal_add_account' as add_account %}
+            {% url 'ledger:modal_add_account' as add_account %}
             <button class="btn btn-light-primary font-weight-bolder btn-sm"
                data-open-modal
                data-modal-url="{{ add_account }}"
@@ -112,7 +112,7 @@
     const searchQuery = $('#searchQuery')
     const selectStatus = $('#selectStatus')
 
-    const updateAccountURL = '{% url 'profile:ajax_update_account' %}'
+    const updateAccountURL = '{% url 'ledger:ajax_update_account' %}'
     const redirectionURL = 'flag_redirection'
     const submitBtn = null
 
@@ -268,7 +268,7 @@
         const defaultFormData = {
             'search': searchQuery.val(),
             'status': selectStatus.val(),
-            'request_url': '{% url 'profile:subpage_account_list' %}'
+            'request_url': '{% url 'ledger:subpage_account_list' %}'
         }
         ajaxSubpageRequest(buildFormData(defaultFormData));
     }

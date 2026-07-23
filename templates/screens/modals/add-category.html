@@ -94,16 +94,19 @@
             const redirectionURL = 'flag_redirection'
             const closeBtn = $('#closeBtn')
             const submitBtn = $('#submitBtn')
-            const requestURL = '{% url 'profile:ajax_add_category' %}'
+            const requestURL = '{% url 'ledger:ajax_add_category' %}'
             const formData = new FormData(addCategoryForm[0]);
             Ajax.postRequest(
                 requestURL,
                 formData,
                 submitBtn,
                 redirectionURL,
-            )
-            closeBtn.click()
-            categoryInputChange()
+            ).then(function (response) {
+                if (response.success){
+                    closeBtn.click()
+                    categoryInputChange()
+                }
+            })
         })
     });
 </script>

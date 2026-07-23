@@ -97,7 +97,7 @@
             const redirectionURL = 'flag_redirection'
             const closeBtn = $('#closeBtn')
             const submitBtn = $('#submitBtn')
-            const requestURL = '{% url 'profile:ajax_update_category' %}'
+            const requestURL = '{% url 'ledger:ajax_update_category' %}'
             const formData = new FormData(updateCategoryForm[0]);
             Ajax.postRequest(
                 requestURL,
