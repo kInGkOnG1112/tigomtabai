@@ -1,9 +1,11 @@
+from django.db.models import Q
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
 
+from ledger.forms import RecordForms
 from utils.decorators import login_required
 from utils.helpers import search_result
-from ledger.models import Category, Account
+from ledger.models import Category, Account, Record
 
 
 @login_required
@@ -44,3 +46,15 @@ def account_list(request):
         "col_class": "col-lg-4"
     }
     return render(request, template_name="components/cards/card-symbol-1.html", context=context)
+
+
+@login_required
+@require_GET
+def record_list(request):
+    response = RecordForms(request).list_data()
+    context = {
+        "data_list": response["results"],
+        "pagination": response["pagination"],
+        "payload_data": request.GET.dict(),
+    }
+    return render(request, template_name="components/tables/table-1.html", context=context)

@@ -248,7 +248,6 @@ def validate_record(request):
         response["error_message"] = "Please enter a valid numeric amount."
         return response
 
-    import pdb; pdb.set_trace()
     cleaned_data.update(
         {
             "record_type": record_type,

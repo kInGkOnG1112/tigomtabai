@@ -62,7 +62,9 @@ class AjaxRequest {
                 </div>
             </div>
         `
-        divComponent.html(divLoader)
+        console.log(formData)
+        const scrollSentinelDiv = $("#"+formData.scroll_sentinel)
+        scrollSentinelDiv.html(divLoader)
 
         setTimeout(function () {
             $.ajax({
@@ -72,7 +74,12 @@ class AjaxRequest {
                 dataType: 'text',
                 success: function(response){
                     if(response){
-                        divComponent.html(response)
+                        scrollSentinelDiv.html('')
+                        if (formData.append){
+                            divComponent.append(response)
+                        } else {
+                            divComponent.html(response)
+                        }
                     }
                 }
             })

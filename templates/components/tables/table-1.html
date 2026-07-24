@@ -1,0 +1,130 @@
+{% load static humanize %}
+
+{% for data in data_list %}
+    <tr class="border-bottom-light border-bottom border-2">
+        <!-- Account Column (Source / Destination) -->
+        <td class="pl-0 py-5">
+            {% if data.type == 'EXPENSE' or data.type == 'TRANSFER' %}
+                {% with account=data.account_from label="Source" %}
+                    <div class="d-flex align-items-center">
+                        <div class="symbol symbol-60 flex-shrink-0 mr-4 symbol-circle">
+                            {% if account.icon.image %}
+                                <div class="symbol-label" style="background-image: url('{{ account.icon.image.url }}');"></div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <a href="#" class="text-dark-75 font-weight-bolder text-hover-primary mb-1 font-size-lg">
+                                {{ account.name|truncatechars:25 }}
+                            </a>
+                            <span class="text-muted font-weight-bold d-block font-size-sm">
+                                {{ account.icon.name|default:'----'|truncatechars:25 }}
+                            </span>
+                            <span class="text-muted font-weight-bold font-size-sm">Account:</span>
+                            <span class="text-primary font-weight-bold font-size-sm">{{ label }}</span>
+                        </div>
+                    </div>
+                {% endwith %}
+            {% else %}
+                {% with account=data.account_to label="Destination" %}
+                    <div class="d-flex align-items-center">
+                        <div class="symbol symbol-60 flex-shrink-0 mr-4 symbol-circle">
+                            {% if account.icon.image %}
+                                <div class="symbol-label" style="background-image: url('{{ account.icon.image.url }}');"></div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <a href="#" class="text-dark-75 font-weight-bolder text-hover-primary mb-1 font-size-lg">
+                                {{ account.name|truncatechars:25 }}
+                            </a>
+                            <span class="text-muted font-weight-bold d-block font-size-sm">
+                                {{ account.icon.name|default:'----'|truncatechars:25 }}
+                            </span>
+                            <span class="text-muted font-weight-bold font-size-sm">Account:</span>
+                            <span class="text-primary font-weight-bold font-size-sm">{{ label }}</span>
+                        </div>
+                    </div>
+                {% endwith %}
+            {% endif %}
+        </td>
+
+        <!-- Category / Secondary Account Column -->
+        <td class="pl-0 py-5">
+            {% if data.type in 'INCOME,EXPENSE' %}
+                <div class="d-flex align-items-center">
+                    <div class="symbol symbol-60 flex-shrink-0 mr-4 symbol-circle symbol-light">
+                        <div class="symbol-label">
+                            {% if data.category.icon.image %}
+                                <img src="{{ data.category.icon.image.url }}" class="h-50 align-self-center" alt="{{ data.category.name }}">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        <a href="#" class="text-dark-75 font-weight-bolder text-hover-primary mb-1 font-size-lg">
+                            {{ data.category.name|truncatechars:25 }}
+                        </a>
+                        <span class="text-muted font-weight-bold d-block font-size-sm">Category</span>
+                    </div>
+                </div>
+            {% else %}
+                <div class="d-flex align-items-center">
+                    <div class="symbol symbol-60 flex-shrink-0 mr-4 symbol-circle">
+                        {% if data.account_to.icon.image %}
+                            <div class="symbol-label" style="background-image: url('{{ data.account_to.icon.image.url }}');"></div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <a href="#" class="text-dark-75 font-weight-bolder text-hover-primary mb-1 font-size-lg">
+                            {{ data.account_to.name|truncatechars:25 }}
+                        </a>
+                        <span class="text-muted font-weight-bold d-block font-size-sm">
+                            {{ data.account_to.icon.name|default:'----'|truncatechars:25 }}
+                        </span>
+                        <span class="text-muted font-weight-bold font-size-sm">Account:</span>
+                        <span class="text-primary font-weight-bold font-size-sm">Destination</span>
+                    </div>
+                </div>
+            {% endif %}
+        </td>
+
+        <!-- Amount Column -->
+        <td>
+            <div class="d-flex flex-column flex-grow-1 my-lg-0 my-2 pr-3 text-right">
+                <span class="font-weight-bolder {% if data.type == 'EXPENSE' %}text-danger{% else %}text-success{% endif %}">
+                    {% if data.type == 'EXPENSE' %}-{% else %}+{% endif %}{{ data.amount|floatformat:2|intcomma }}
+                </span>
+                <span class="text-muted font-weight-bold font-size-sm my-1">Amount</span>
+            </div>
+        </td>
+
+        <!-- Reference & Date Column -->
+        <td>
+            <div class="d-flex flex-column flex-grow-1 my-lg-0 my-2 pr-3">
+                <span class="text-muted font-weight-bold font-size-lg">
+                    REF: <span class="text-dark-75 font-weight-bold">{{ data.reference_number }}</span>
+                </span>
+                <span class="text-muted font-weight-bold font-size-md my-1">
+                    Date: {{ data.transaction_date|date:"F j, Y, g:i A" }}
+                </span>
+            </div>
+        </td>
+
+        <!-- Badge Column -->
+        <td>
+            <span class="label label-lg label-light-{{ data.badge_color }} label-inline">{{ data.type }}</span>
+        </td>
+
+        <!-- Actions Column -->
+        <td class="pr-0 text-center">
+            <a href="#" class="btn btn-light-success font-weight-bolder font-size-sm">View Details</a>
+        </td>
+    </tr>
+{% empty %}
+    {% include 'components/empty.html' %}
+{% endfor %}
+
+<script>
+    updatePaginationState(
+        {{ pagination.next_cursor|default:"null" }},
+        {% if pagination.has_next %}true{% else %}false{% endif %}
+    );
+</script>

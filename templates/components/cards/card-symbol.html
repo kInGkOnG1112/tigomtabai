@@ -5,8 +5,10 @@
               <div class="ribbon-target bg-danger font-size-sm" style="top: -2px; right: 20px;">Default</div>
             <div class="card-body">
                 <div class="d-flex flex-wrap align-items-center ">
-                    <div class="symbol symbol-60 symbol-2by3 flex-shrink-0 mr-4">
-                        <div class="symbol-label" style="background-image: url({{ data.icon.image.url }})"></div>
+                    <div class="symbol symbol-60 symbol-2by2 flex-shrink-0 mr-4 symbol-light">
+                        <div class="symbol-label">
+                            <img src="{{ data.icon.image.url }}" class="h-50 align-self-center" alt="">
+                        </div>
                     </div>
                     <div class="d-flex flex-column flex-grow-1 my-lg-0 my-2 pr-3">
                         <a href="#" class="text-dark-75 font-weight-bolder text-hover-primary font-size-lg">{{ data.name|capfirst }}</a>
@@ -30,11 +32,6 @@
         </div>
     </div>
 {% empty %}
-	<div class="col-lg-12 mt-20" >
-        <div class="d-flex justify-content-center align-items-center flex-column">
-            <i class="icon-xxl fas fa-box-open text-muted"></i>
-            <h5 class="text-muted mt-3">No records found!</h5>
-        </div>
-    </div>
+    {% include 'components/empty.html' %}
 {% endfor %}
 

@@ -108,3 +108,12 @@ class Record(models.Model):
 
     def __str__(self):
         return f"{self.type} - {self.amount} ({self.transaction_date})"
+
+    @property
+    def badge_color(self):
+        mapping = {
+            "EXPENSE": "danger",
+            "INCOME": "primary",
+            "TRANSFER": "success",
+        }
+        return mapping.get(self.type, "secondary")

@@ -8,7 +8,8 @@ urlpatterns_subpages = []
 
 urlpatterns_table_subpages = [
     path('subpage/category-list/', subpage.category_list, name='subpage_category_list'),
-    path('subpage/account-list/', subpage.account_list, name='subpage_account_list')
+    path('subpage/account-list/', subpage.account_list, name='subpage_account_list'),
+    path('subpage/record-list/', subpage.record_list, name='subpage_record_list')
 ]
 
 urlpatterns_ajax = [

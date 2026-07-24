@@ -31,6 +31,7 @@
                         {% include 'base/header-bottom.html' %}
 					</div>
 					<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+                        <input type="hidden" name="cursor" id="cursor" value="">
                         {% block content %}
                         {% endblock content %}
 					</div>
@@ -80,6 +81,7 @@
 
         <script src="{% static 'js/modals.js' %}"></script>
         <script src="{% static 'js/ajax-request.js' %}"></script>
+        <script src="{% static 'js/infinite-scroll.js' %}"></script>
         <script>
             const Ajax = new AjaxRequest()
             function ajaxSubpageRequest(formData){

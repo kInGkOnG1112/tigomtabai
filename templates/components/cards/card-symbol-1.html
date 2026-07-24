@@ -142,11 +142,5 @@
         </div>
     </div>
 {% empty %}
-	<div class="col-lg-12 mt-20" >
-        <div class="d-flex justify-content-center align-items-center flex-column">
-            <i class="icon-xxl fas fa-box-open text-muted"></i>
-            <h5 class="text-muted mt-3">No records found!</h5>
-        </div>
-    </div>
-
+    {% include 'components/empty.html' %}
 {% endfor %}
