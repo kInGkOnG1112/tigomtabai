@@ -206,5 +206,18 @@
         cursor.val(nextCursor);
         ledgerScroll.setHasMore(hasNextPage);
     }
+
+    function deleteRecord(id){
+        const closeBtn = $('#closeBtn')
+        Swal.fire(swalWarningConfig({
+            actionText: "Delete record?",
+            bodyText: "This action cannot be undone and will revert all related transactions and balances.",
+        })).then((result) => {
+            if (result.isConfirmed){
+                closeBtn.click()
+                handleFilterChange()
+            }
+        });
+    }
 </script>
 {% endblock %}

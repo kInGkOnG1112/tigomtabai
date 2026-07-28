@@ -115,7 +115,12 @@
 
         <!-- Actions Column -->
         <td class="pr-0 text-center">
-            <a href="#" class="btn btn-light-success font-weight-bolder font-size-sm">View Details</a>
+            {% url 'ledger:modal_update_record' data.id as update_record_modal %}
+            <a class="btn btn-light-success font-weight-bolder font-size-sm"
+                data-open-modal
+                data-modal-url="{{ update_record_modal }}"
+                data-modal-id="{{ modal_id }}"
+                data-modal-size="modal-lg">View Details</a>
         </td>
     </tr>
 {% empty %}

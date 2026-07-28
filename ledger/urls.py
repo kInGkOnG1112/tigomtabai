@@ -20,10 +20,12 @@ urlpatterns_ajax = [
     path('ajax/update-account/', ajax.update_account, name='ajax_update_account'),
 
     path('ajax/add-record/', ajax.add_record, name='ajax_add_record'),
+    path('ajax/update-record/', ajax.update_record, name='ajax_update_record'),
 ]
 
 urlpatterns_modals = [
     path('modals/records/add/', modals.add_record, name='modal_add_record'),
+    path('modals/records/update/<int:id>/', modals.update_record, name='modal_update_record'),
 
     path('modals/category/add/', modals.add_category, name='modal_add_category'),
     path('modals/category/update/<int:id>/', modals.update_category, name='modal_update_category'),

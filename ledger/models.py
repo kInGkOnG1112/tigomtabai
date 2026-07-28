@@ -117,3 +117,11 @@ class Record(models.Model):
             "TRANSFER": "success",
         }
         return mapping.get(self.type, "secondary")
+
+    @property
+    def active_account(self):
+        return self.account_to if self.type == 'INCOME' else self.account_from
+
+    @property
+    def account_role(self):
+        return "Destination" if self.type == 'INCOME' else "Source"

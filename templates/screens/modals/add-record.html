@@ -49,18 +49,6 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="form-group mb-5 select2-modal">
-                            <label for="income_category">Category: <span class="text-danger">*</span></label>
-                            <select class="form-control select2 category-selection" id="income_category" name="income_category">
-                                {% for category in income_category %}
-                                    <option value="{{ category.id }}"
-                                            data-image="{{ category.icon.image.url }}"
-                                            data-lower_text="{{ category.type|title }}">{{ category.name|title }}</option>
-                                {% endfor %}
-                             </select>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group mb-5 select2-modal">
                             <label for="income_account">Account: <span class="text-danger">*</span></label>
                             <select class="form-control select2 account-selection" id="income_account" name="income_account">
                                 {% for account in accounts %}
@@ -68,6 +56,18 @@
                                             data-image="{{ account.icon.image.url }}"
                                             data-lower_text="Bal: ₱{{ account.balance|floatformat:2|intcomma }}">
                                         {{ account.name|title }}</option>
+                                {% endfor %}
+                             </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5 select2-modal">
+                            <label for="income_category">Category: <span class="text-danger">*</span></label>
+                            <select class="form-control select2 category-selection" id="income_category" name="income_category">
+                                {% for category in income_category %}
+                                    <option value="{{ category.id }}"
+                                            data-image="{{ category.icon.image.url }}"
+                                            data-lower_text="{{ category.type|title }}">{{ category.name|title }}</option>
                                 {% endfor %}
                              </select>
                         </div>
@@ -117,18 +117,6 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="form-group mb-5 select2-modal">
-                            <label for="expense_category">Category: <span class="text-danger">*</span></label>
-                            <select class="form-control select2 category-selection" id="expense_category" name="expense_category">
-                                {% for category in expense_category %}
-                                    <option value="{{ category.id }}"
-                                            data-image="{{ category.icon.image.url }}"
-                                            data-lower_text="{{ category.type|title }}">{{ category.name|title }}</option>
-                                {% endfor %}
-                             </select>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group mb-5 select2-modal">
                             <label for="expense_account">Account: <span class="text-danger">*</span></label>
                             <select class="form-control select2 account-selection" id="expense_account" name="expense_account">
                                 {% for account in accounts %}
@@ -136,6 +124,18 @@
                                             data-image="{{ account.icon.image.url }}"
                                             data-lower_text="Bal: ₱{{ account.balance|floatformat:2|intcomma }}">
                                         {{ account.name|title }}</option>
+                                {% endfor %}
+                             </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5 select2-modal">
+                            <label for="expense_category">Category: <span class="text-danger">*</span></label>
+                            <select class="form-control select2 category-selection" id="expense_category" name="expense_category">
+                                {% for category in expense_category %}
+                                    <option value="{{ category.id }}"
+                                            data-image="{{ category.icon.image.url }}"
+                                            data-lower_text="{{ category.type|title }}">{{ category.name|title }}</option>
                                 {% endfor %}
                              </select>
                         </div>
@@ -254,7 +254,7 @@
         $('.kt_datetimepicker').datetimepicker({
             locale: 'ph',
             ignoreReadonly: true,
-            defaultDate: moment(), 
+            defaultDate: moment(),
             useCurrent: true
         });
 

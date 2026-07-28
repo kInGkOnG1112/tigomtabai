@@ -1,0 +1,345 @@
+{% load static %}
+{% load humanize %}
+{% load i18n humanize static %}
+
+<form id="updateRecordForm" method="POST" action="">
+    {% csrf_token %}
+    <input type="hidden" name="record_type" id="record_type" value="{{ record.type|lower }}">
+    <input type="hidden" name="id" id="id" value="{{ record.id }}">
+
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">View Record</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i aria-hidden="true" class="ki ki-close"></i>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="card-toolbar mb-5">
+            <ul class="nav nav-light-dark nav-bold nav-pills" id="recordTypeTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#kt_tab_pane_5_1" data-type="details" role="tab">
+                        <span class="nav-icon"><i class="flaticon2-list"></i></span>
+                        <span class="nav-text">Details</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#kt_tab_pane_5_2" data-type="update" role="tab">
+                        <span class="nav-icon"><i class="flaticon-edit"></i></span>
+                        <span class="nav-text">Update</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-type="delete" role="button" onclick="deleteRecord({{ record.id }})">
+                        <span class="nav-icon"><i class="flaticon-delete"></i></span>
+                        <span class="nav-text">Delete</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content">
+            {# DETAILS TAB #}
+            <div class="tab-pane fade show active" id="kt_tab_pane_5_1" role="tabpanel">
+                <div class="row">
+                    <div class="col-lg-12 mt-2">
+                        <div class="alert alert-custom alert-default d-flex flex-wrap mb-5">
+                            <div class="col-lg-4 p-0">
+                                <div class="mr-12 d-flex flex-column">
+                                    <span class="font-weight-bold text-dark-50 mb-2">Reference</span>
+                                    <span class="font-weight-bolder">{{ record.reference_number }}</span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 p-0">
+                                <div class="mr-12 d-flex flex-column">
+                                    <span class="font-weight-bold text-dark-50 mb-2">Amount</span>
+                                    <span class="font-weight-bolder">
+                                        <span class="font-weight-bold text-dark-50">₱</span>{{ record.amount|floatformat:2|intcomma }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 p-0">
+                                <div class="mr-12 d-flex flex-column">
+                                    <span class="font-weight-bold text-dark-50 mb-2">Transaction Date</span>
+                                    <span class="font-weight-bolder">{{ record.transaction_date|date:"DATETIME_FORMAT" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12 mb-10 mt-5">
+                        <div class="d-flex flex-wrap mb-5">
+                            {# Account From / To Display #}
+                            <div class="col-lg-4 d-flex flex-wrap">
+                                <div class="flex-shrink-0 mr-4 symbol symbol-60 symbol-circle">
+                                    <img src="{{ record.active_account.icon.image.url }}" alt="{{ record.active_account.name }}">
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <a href="#" class="card-title text-hover-primary font-weight-bolder font-size-lg text-dark mb-1">
+                                        {{ record.active_account.name|truncatechars:25 }}
+                                    </a>
+                                    <span class="text-muted font-weight-bold font-size-sm">
+                                        {{ record.active_account.icon.name|truncatechars:25 }}
+                                    </span>
+                                    <span class="text-muted font-weight-bold font-size-sm">
+                                        Account
+                                        <span class="text-primary font-weight-bold font-size-sm">{{ record.account_role }}</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {# Record Type #}
+                            <div class="col-lg-4">
+                                <div class="d-flex flex-column align-items-center mr-auto ml-auto mt-3">
+                                    <a href="#" class="card-title text-hover-primary font-weight-bolder font-size-lg text-dark mb-1">{{ record.get_type_display|default:record.type }}</a>
+                                    <span class="text-muted font-weight-bold">Type</span>
+                                </div>
+                            </div>
+
+                            {# Destination Account or Category #}
+                            <div class="col-lg-4 d-flex flex-wrap">
+                                {% if record.type == 'TRANSFER' %}
+                                    <div class="flex-shrink-0 mr-4 symbol symbol-60 symbol-circle">
+                                        <img src="{{ record.account_to.icon.image.url }}" alt="{{ record.account_to.name }}">
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <a href="#" class="card-title text-hover-primary font-weight-bolder font-size-lg text-dark mb-1">
+                                            {{ record.account_to.name|truncatechars:25 }}
+                                        </a>
+                                        <span class="text-muted font-weight-bold font-size-sm">
+                                            {{ record.account_to.icon.name|truncatechars:25 }}
+                                        </span>
+                                        <span class="text-muted font-weight-bold font-size-sm">
+                                            Account
+                                            <span class="text-primary font-weight-bold font-size-sm">Destination</span>
+                                        </span>
+                                    </div>
+                                {% else %}
+                                    <div class="flex-shrink-0 mr-4 symbol symbol-60 symbol-circle symbol-light">
+                                        <div class="symbol-label">
+                                            <img src="{{ record.category.icon.image.url }}" class="h-50 align-self-center" alt="{{ record.category.name }}">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-column mr-auto mt-2">
+                                        <a href="#" class="card-title text-hover-primary font-weight-bolder font-size-lg text-dark mb-1">
+                                            {{ record.category.name }}
+                                        </a>
+                                        <span class="text-muted font-weight-bold font-size-sm">Category</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12">
+                        <div class="alert alert-custom alert-default d-flex flex-wrap mb-5">
+                            <div class="mr-12 d-flex flex-column">
+                                <span class="font-weight-bold text-dark-50 mb-2">Notes</span>
+                                <span class="font-weight-bolder">{{ record.notes|default:"-----" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# UPDATE TAB #}
+            <div class="tab-pane fade" id="kt_tab_pane_5_2" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-lg-12 mt-2">
+                        <div class="form-group form-group-last">
+                            <div class="alert alert-custom alert-default" role="alert">
+                                <div class="alert-icon">
+                                    <span class="svg-icon svg-icon-warning svg-icon-xl">
+                                        {% include 'components/icons/svg/warning-2.html' %}
+                                    </span>
+                                </div>
+                                <div class="alert-text">
+                                    {% blocktranslate with record_type=record.get_type_display|lower|title %}
+                                        Any actions submitted through this form may update account's balance and its record will be updated and tagged as an <strong>{{ record_type }}</strong> record in the <strong>ledger</strong>. Changing accounts may also update all the affected accounts balances.
+                                    {% endblocktranslate %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Category vs Source Account #}
+                    <div class="col-lg-6">
+                        {% if record.type == 'TRANSFER' %}
+                            <div class="form-group mb-5 select2-modal">
+                                <label for="source_account">Source Account <span class="text-danger">*</span></label>
+                                <select class="form-control select2 account-selection" id="source_account" name="account_from">
+                                    {% for account in accounts %}
+                                        <option value="{{ account.id }}"
+                                                {% if account.id == record.account_from_id %}selected{% endif %}
+                                                data-image="{{ account.icon.image.url }}"
+                                                data-lower_text="Current Bal: ₱{{ account.balance|floatformat:2|intcomma }}">
+                                            {{ account.name|title }}
+                                        </option>
+                                    {% endfor %}
+                                 </select>
+                            </div>
+                        {% else %}
+                            <div class="form-group mb-5 select2-modal">
+                                <label for="category">Category <span class="text-danger">*</span></label>
+                                <select class="form-control select2 category-selection" id="category" name="{{ record.type|lower }}_category">
+                                    {% for item in categories %}
+                                        <option value="{{ item.id }}"
+                                                {% if item.id == record.category_id %}selected{% endif %}
+                                                data-image="{{ item.icon.image.url }}"
+                                                data-lower_text="{{ item.type|title }}">
+                                            {{ item.name|title }}
+                                        </option>
+                                    {% endfor %}
+                                 </select>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {# Destination vs Account Selector #}
+                    <div class="col-lg-6">
+                        {% if record.type == 'TRANSFER' or record.type == 'INCOME' %}
+                            <div class="form-group mb-5 select2-modal">
+                                <label for="destination_account">
+                                    {% if record.type == 'TRANSFER' %}Destination Account{% else %}Account{% endif %}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-control select2 account-selection" id="destination_account" name="{% if record.type == 'TRANSFER' %}account_to{% else %}{{ record.type|lower }}_account{% endif %}">
+                                    {% for account in accounts %}
+                                        <option value="{{ account.id }}"
+                                                {% if account.id == record.account_to_id %}selected{% endif %}
+                                                data-image="{{ account.icon.image.url }}"
+                                                data-lower_text="{% translate 'Current Bal:' %} ₱{{ account.balance|floatformat:2|intcomma }}">
+                                            {{ account.name|title }}
+                                        </option>
+                                    {% endfor %}
+                                 </select>
+                            </div>
+                        {% else %}
+                            <div class="form-group mb-5 select2-modal">
+                                <label for="source_account">Account <span class="text-danger">*</span></label>
+                                <select class="form-control select2 account-selection" id="source_account" name="{{ record.type|lower }}_account">
+                                    {% for account in accounts %}
+                                        <option value="{{ account.id }}"
+                                                {% if account.id == record.account_to_id %}selected{% endif %}
+                                                data-image="{{ account.icon.image.url }}"
+                                                data-lower_text="{% translate 'Current Bal:' %} ₱{{ account.balance|floatformat:2|intcomma }}">
+                                            {{ account.name|title }}
+                                        </option>
+                                    {% endfor %}
+                                 </select>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {# Amount Input #}
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5">
+                            <label for="amount">Amount <span class="text-danger">*</span></label>
+                            <input type="text" id="amount" name="{{ record.type|lower }}_amount" class="form-control amount required-field" placeholder="0.00"
+                                   value="{{ record.amount|floatformat:2 }}" inputmode="decimal"/>
+                            <span class="form-text text-muted">Amount to be deducted into the selected account</span>
+                       </div>
+                    </div>
+
+                    {# Transaction Date & Time #}
+                    <div class="col-lg-6">
+                        <div class="form-group mb-5">
+                            <label for="tdt">Transaction date & time</label>
+                            <div class="input-group date kt_datetimepicker" id="kt_datetimepicker_expense" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" placeholder="MM/DD/YYYY HH:MM AM/PM" id="tdt" name="{{ record.type|lower }}_tdt" value="{{ record.transaction_date|date:'m/d/Y h:i A' }}" data-target="#kt_datetimepicker_expense"/>
+                                <div class="input-group-append" data-target="#kt_datetimepicker_expense" data-toggle="datetimepicker">
+                                    <span class="input-group-text">
+                                        <i class="ki ki-calendar"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <span class="form-text text-muted">Expected format: MM/DD/YYYY 12:00 AM</span>
+                        </div>
+                    </div>
+
+                    {# Notes Textarea #}
+                    <div class="col-lg-12">
+                        <div class="form-group mb-3">
+                            <label for="notes">Notes</label>
+                            <textarea id="notes" name="{{ record.type|lower }}_notes" class="form-control" rows="4" placeholder="Ex. Dine at McDonald's" maxlength="300">{{ record.notes }}</textarea>
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" id="closeBtn" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
+        <button type="submit" id="submitBtn" class="btn btn-primary font-weight-bold">Submit</button>
+    </div>
+</form>
+<script src="{% static 'js/autonumeric.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $('.category-selection').select2({
+            placeholder: "Select Category",
+            templateResult: formatState,
+            templateSelection: formatState,
+        });
+
+        $('.account-selection').select2({
+            placeholder: "Select Account",
+            templateResult: formatState,
+            templateSelection: formatState,
+        });
+
+        $('#submitBtn').toggle(false)
+
+        $('.kt_datetimepicker').datetimepicker({
+            locale: 'ph',
+            ignoreReadonly: true,
+            defaultDate: moment(),
+            useCurrent: true
+        });
+
+        function updateRequiredFields() {
+            $('.tab-pane input, .tab-pane select, .tab-pane textarea').each(function () {
+                $(this).removeAttr('required');
+                $(this).prop('required', false);
+            });
+
+            var $activePane = $('.tab-content .tab-pane.active');
+            $activePane.find('.required-field').each(function () {
+                $(this).attr('required', 'required');
+                $(this).prop('required', true);
+            });
+
+        }
+
+        updateRequiredFields();
+
+        $('#recordTypeTabs a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            const type = $(e.target).data('type');
+            $('#submitBtn').toggle(type === 'update')
+
+            updateRequiredFields();
+        });
+
+        const updateRecordForm = $('#updateRecordForm')
+        updateRecordForm.submit(function (e) {
+            e.preventDefault()
+            const redirectionURL = 'flag_redirection'
+            const closeBtn = $('#closeBtn')
+            const submitBtn = $('#submitBtn')
+            const requestURL = '{% url 'ledger:ajax_update_record' %}'
+            const formData = new FormData(updateRecordForm[0]);
+            Ajax.postRequest(
+                requestURL,
+                formData,
+                submitBtn,
+                redirectionURL,
+            ).then(function (response) {
+                if (response.success){
+                    closeBtn.click()
+                    handleFilterChange()
+                }
+            })
+        })
+    })
+</script>

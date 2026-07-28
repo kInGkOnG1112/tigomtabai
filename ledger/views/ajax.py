@@ -2,9 +2,11 @@ from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
 from django.db import transaction
+from django.db.models import F
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
+from ledger.forms import RecordForms
 from utils.decorators import login_required
 from utils.helpers import GenericResponse, generate_unique_ref
 from ledger.models import Category, Account, RecordType, Record
@@ -153,7 +155,8 @@ def update_account(request):
 def add_record(request):
     method = "Add Ledger Record"
     try:
-        validated_data = validate_record(request)
+        record_form = RecordForms(request)
+        validated_data = record_form.validate_data()
         if validated_data.get("error_message"):
             return JsonResponse(GenericResponse.error(
                 request=request,
@@ -226,91 +229,92 @@ def add_record(request):
         ))
 
 
-
-def validate_record(request):
-    data = request.POST
-    record_type = (data.get("record_type") or "").strip().lower()
-    cleaned_data = {key: value for key, value in data.items() if key != "csrfmiddlewaretoken"}
-
-    response = {"data": cleaned_data, "error_message": ""}
-
-    if record_type.upper() not in [RecordType.INCOME, RecordType.EXPENSE, RecordType.TRANSFER]:
-        response["error_message"] = "Invalid record type."
-        return response
-
-    raw_amount = (str(data.get(f"{record_type}_amount", "0")).replace(",", "").strip())
+@login_required
+@require_POST
+def update_record(request):
+    method = "Update Ledger Record"
     try:
-        amount = Decimal(raw_amount)
-        if amount <= 0:
-            response["error_message"] = "Amount must be greater than zero."
-            return response
-    except (InvalidOperation, ValueError):
-        response["error_message"] = "Please enter a valid numeric amount."
-        return response
+        record_form = RecordForms(request)
+        validated_data = record_form.validate_data()
+        if validated_data.get("error_message"):
+            return JsonResponse(GenericResponse.error(
+                request=request,
+                method=method,
+                user_message=validated_data.get("error_message"),
+            ))
 
-    cleaned_data.update(
-        {
-            "record_type": record_type,
-            "amount": amount,
-            "notes": (data.get(f"{record_type}_notes") or "").strip(),
-            "tdt": datetime.strptime((data.get(f"{record_type}_tdt") or "").strip(), '%m/%d/%Y %I:%M %p'),
-        }
-    )
+        data = validated_data.get("data", {})
+        record_type = data.get("record_type", "").upper()
 
-    if record_type.upper() in [RecordType.INCOME, RecordType.EXPENSE]:
-        account_id = data.get(f"{record_type}_account")
-        category_id = data.get(f"{record_type}_category")
+        amount = data.get("amount", 0)
+        transaction_date = data.get("tdt") or datetime.now()
 
-        account = Account.objects.filter(
-            id=account_id, owner=request.user, is_archived=False
-        ).first()
-        category = Category.objects.filter(
-            id=category_id, is_active=True
-        ).first()
+        record = data.get("record")
 
-        if not account:
-            response["error_message"] = "Selected account was not found."
-            return response
+        with transaction.atomic():
 
-        if not category:
-            response["error_message"] = "Selected category was not found."
-            return response
+            reverted = record_form.revert_transaction(record)
+            if not reverted:
+                return JsonResponse(GenericResponse.error(
+                    request=request,
+                    method=method,
+                    user_message="Record not found!",
+                ))
 
-        cleaned_data.update({"account": account, "category": category})
+            record.amount = amount
+            record.transaction_date = transaction_date
+            record.notes = data.get("notes", record.notes)
 
-        if record_type.upper() == RecordType.EXPENSE and account.balance < amount:
-            response["error_message"] = f"Insufficient balance in '{account.name.title()}'. Available: ₱{account.balance:,.2f}"
-            return response
+            if record_type in [RecordType.INCOME, RecordType.EXPENSE]:
+                account = data.get("account")
+                record.category = data.get("category")
 
-    elif record_type.upper() == RecordType.TRANSFER:
-        from_id = data.get("account_from", "")
-        to_id = data.get("account_to", "")
+                if record_type == RecordType.INCOME:
+                    account.balance += amount
+                    record.account_to = account
+                    record.account_from = None
+                    delta = amount
+                else:
+                    account.balance -= amount
+                    record.account_from = account
+                    record.account_to = None
+                    delta = -amount
 
-        if from_id == to_id:
-            response["error_message"] = "Source and destination accounts cannot be the same."
-            return response
+                Account.objects.filter(id=account.id).update(
+                    balance=F("balance") + delta,
+                    latest_transaction_date=transaction_date,
+                )
 
-        from_account = Account.objects.filter(
-            id=from_id, owner=request.user, is_archived=False
-        ).first()
-        to_account = Account.objects.filter(
-            id=to_id, owner=request.user, is_archived=False
-        ).first()
+            elif record_type == RecordType.TRANSFER:
+                account_from = data.get("account_from")
+                account_to = data.get("account_to")
 
-        if not from_account:
-            response["error_message"] = "Source account not found."
-            return response
+                record.account_from = account_from
+                record.account_to = account_to
 
-        if not to_account:
-            response["error_message"] = "Destination account not found."
-            return response
+                Account.objects.filter(id=account_from.id).update(
+                    balance=F("balance") - amount,
+                    latest_transaction_date=transaction_date,
+                )
 
-        if from_account.balance < amount:
-            response["error_message"] = f"Insufficient balance in source account '{from_account.name.title()}'. Available: ₱{from_account.balance:,.2f}"
-            return response
+                Account.objects.filter(id=account_to.id).update(
+                    balance=F("balance") + amount,
+                    latest_transaction_date=transaction_date,
+                )
 
-        cleaned_data.update(
-            {"account_from": from_account, "account_to": to_account}
-        )
+            record.save()
 
-    return response
+        return JsonResponse(GenericResponse.success(
+            request=request,
+            method=method,
+            message="Record successfully updated"
+        ))
+
+    except Exception as e:
+        print(str(e))
+        return JsonResponse(GenericResponse.error(
+            request=request,
+            method=method,
+            message=str(e),
+        ))
+

@@ -97,7 +97,10 @@
                     <div class="mb-7">
                         <div class="d-flex justify-content-between align-items-cente my-1">
                             <span class="text-dark-75 font-weight-bolder mr-2">Balance:</span>
-                            <a href="#" class="text-muted text-hover-primary">₱ {{ data.balance|floatformat:2|intcomma }}</a>
+                            <span class="font-weight-bolder pt-1">
+                                <span class="font-weight-bold text-dark-50">₱</span> 
+                                {{ data.balance|floatformat:2|intcomma }}
+                            </span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="text-dark-75 font-weight-bolder mr-2">Latest Transaction:</span>
