@@ -318,3 +318,38 @@ def update_record(request):
             message=str(e),
         ))
 
+
+@login_required
+@require_POST
+def delete_record(request):
+    method = "Delete/remove Ledger Record"
+    try:
+        data = request.POST
+
+        record = Record.objects.filter(id=data.get("id")).first()
+        if not record:
+            return JsonResponse(GenericResponse.error(
+                request=request,
+                method=method,
+                user_message="Record not found!",
+            ))
+
+        with transaction.atomic():
+            record_form = RecordForms(request)
+            record_form.revert_transaction(record)
+            record.delete()
+
+
+        return JsonResponse(GenericResponse.success(
+            request=request,
+            method=method,
+            message="Record successfully deleted"
+        ))
+
+    except Exception as e:
+        print(str(e))
+        return JsonResponse(GenericResponse.error(
+            request=request,
+            method=method,
+            message=str(e),
+        ))

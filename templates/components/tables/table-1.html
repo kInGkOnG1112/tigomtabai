@@ -116,11 +116,20 @@
         <!-- Actions Column -->
         <td class="pr-0 text-center">
             {% url 'ledger:modal_update_record' data.id as update_record_modal %}
-            <a class="btn btn-light-success font-weight-bolder font-size-sm"
+            <a href="#" class="btn btn-icon btn-light btn-hover-light-dark btn-sm mx-3"
                 data-open-modal
                 data-modal-url="{{ update_record_modal }}"
                 data-modal-id="{{ modal_id }}"
-                data-modal-size="modal-lg">View Details</a>
+                data-modal-size="modal-lg">
+                <span class="svg-icon svg-icon-md svg-icon-dark-75">
+                    <i class="flaticon-notepad"></i>
+                </span>
+            </a>
+            <a type="button" onclick="deleteRecord({{ data.id }})" class="btn btn-icon btn-light btn-hover-light-dark btn-sm">
+                <span class="svg-icon svg-icon-md svg-icon-dark-75">
+                    <i class="flaticon-delete"></i>
+                </span>
+            </a>
         </td>
     </tr>
 {% empty %}

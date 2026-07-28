@@ -21,6 +21,7 @@ urlpatterns_ajax = [
 
     path('ajax/add-record/', ajax.add_record, name='ajax_add_record'),
     path('ajax/update-record/', ajax.update_record, name='ajax_update_record'),
+    path('ajax/delete-record/', ajax.delete_record, name='ajax_delete_record'),
 ]
 
 urlpatterns_modals = [
