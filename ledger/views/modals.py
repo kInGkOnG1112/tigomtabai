@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from ledger.models import Account, Category, CategoryType, Record
-from main.models import Icons, IconType
+from main.models import Icons, IconType, Institution
 from utils.decorators import login_required
 
 
@@ -32,12 +32,9 @@ def update_category(request, id):
 
 @login_required
 def add_account(request):
-    icons = Icons.objects.filter(
-        is_active=True,
-        type="ACCOUNTS"
-    )
+    institutions = Institution.objects.filter(is_active=True).order_by('type')
     context = {
-        "icons": icons
+        "institutions": institutions
     }
     return render(request, template_name="screens/modals/add-account.html", context=context)
 
@@ -47,7 +44,7 @@ def add_record(request):
     accounts = Account.objects.filter(
         owner=request.user,
         is_archived=False
-    ).select_related("icon")
+    ).select_related("institution")
 
     categories = Category.objects.filter(
         is_active=True

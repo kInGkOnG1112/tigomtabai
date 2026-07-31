@@ -33,7 +33,7 @@ def category_list(request):
 def account_list(request):
     data = request.GET
 
-    queryset = Account.objects.filter(owner=request.user).order_by("name")
+    queryset = Account.objects.filter(owner=request.user).prefetch_related("institution").order_by("name")
 
     search = data.get("search", "").strip()
     if search != "":

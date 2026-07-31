@@ -83,6 +83,7 @@
         <script src="{% static 'js/ajax-request.js' %}"></script>
         <script src="{% static 'js/infinite-scroll.js' %}"></script>
         <script>
+            const cursor = $('#cursor')
             const Ajax = new AjaxRequest()
             function ajaxSubpageRequest(formData){
                 const requestURL = formData.request_url
@@ -135,7 +136,7 @@
                     const lower = lowerText ? `<span class="text-muted font-size-sm mb-1">${lowerText}</span>` : ''
                     return $(`
                         <div class="d-flex align-items-center ">
-                            <div class="flex-shrink-0 mr-4 symbol symbol-25 ">
+                            <div class="flex-shrink-0 mr-4 symbol symbol-30 ">
                                 <img src="${imgPath}" alt="${state.text}">
                             </div>
                             <div class="d-flex flex-column mr-auto">

@@ -7,6 +7,7 @@ from unfold.contrib.filters.admin import (
 )
 from .models import (
     Icons,
+    Institution,
     ActivityLog
 )
 
@@ -17,15 +18,34 @@ class IconAdmin(ModelAdmin):
     list_per_page = 10
     list_filter_submit = True
 
-    search_fields = ('name', )
+    search_fields = ("name", )
     list_display = (
-        'name',
-        'type',
-        'is_active',
-        'created_at'
+        "name",
+        "type",
+        "is_active",
+        "created_at"
     )
     list_filter = (
-        ('type', ChoicesDropdownFilter),
+        ("type", ChoicesDropdownFilter),
+    )
+
+
+@admin.register(Institution)
+class InstitutionAdmin(ModelAdmin):
+    unfold_icon = "image"
+    list_per_page = 10
+    list_filter_submit = True
+
+    search_fields = ("name", )
+    list_display = (
+        "name",
+        "prefix",
+        "type",
+        "is_active",
+        "created_at"
+    )
+    list_filter = (
+        ("type", ChoicesDropdownFilter),
     )
 
 
@@ -35,17 +55,17 @@ class ActivityLogAdmin(ModelAdmin):
     list_filter_submit = True
     list_per_page = 10
 
-    raw_id_fields = ('user',)
-    search_fields = ('name', )
+    raw_id_fields = ("user",)
+    search_fields = ("name", )
     list_display = (
-        'user',
-        'activity_type',
-        'activity_details',
-        'ip_address',
-        'success',
-        'timestamp'
+        "user",
+        "activity_type",
+        "activity_details",
+        "ip_address",
+        "success",
+        "timestamp"
     )
     list_filter = (
-        'activity_type',
-        ('timestamp', RangeDateFilter)
+        "activity_type",
+        ("timestamp", RangeDateFilter)
     )

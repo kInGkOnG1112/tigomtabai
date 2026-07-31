@@ -10,7 +10,7 @@ from ledger.forms import RecordForms
 from utils.decorators import login_required
 from utils.helpers import GenericResponse, generate_unique_ref
 from ledger.models import Category, Account, RecordType, Record
-from main.models import Icons
+from main.models import Icons, Institution
 
 
 @login_required
@@ -93,9 +93,9 @@ def add_account(request):
     try:
         data = request.POST
         with transaction.atomic():
-            icon = Icons.objects.filter(id=data.get("institution")).first()
+            institution = Institution.objects.filter(id=data.get("institution")).first()
             Account.objects.create(
-                icon=icon,
+                institution=institution,
                 owner=request.user,
                 name=data.get("name", ""),
                 description=data.get("description", ""),

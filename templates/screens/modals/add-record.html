@@ -53,7 +53,7 @@
                             <select class="form-control select2 account-selection" id="income_account" name="income_account">
                                 {% for account in accounts %}
                                     <option value="{{ account.id }}"
-                                            data-image="{{ account.icon.image.url }}"
+                                            data-image="{{ account.institution.icon.image.url }}"
                                             data-lower_text="Bal: ₱{{ account.balance|floatformat:2|intcomma }}">
                                         {{ account.name|title }}</option>
                                 {% endfor %}
@@ -121,7 +121,7 @@
                             <select class="form-control select2 account-selection" id="expense_account" name="expense_account">
                                 {% for account in accounts %}
                                     <option value="{{ account.id }}"
-                                            data-image="{{ account.icon.image.url }}"
+                                            data-image="{{ account.institution.icon.image.url }}"
                                             data-lower_text="Bal: ₱{{ account.balance|floatformat:2|intcomma }}">
                                         {{ account.name|title }}</option>
                                 {% endfor %}
@@ -189,7 +189,7 @@
                             <select class="form-control select2 account-selection" id="account_from" name="account_from">
                                 {% for account in accounts %}
                                     <option value="{{ account.id }}"
-                                            data-image="{{ account.icon.image.url }}"
+                                            data-image="{{ account.institution.icon.image.url }}"
                                             data-lower_text="Bal: ₱{{ account.balance|floatformat:2|intcomma }}"
                                             {% if forloop.counter == 1 %}selected{% endif %} >
                                         {{ account.name|title }}</option>
@@ -203,7 +203,7 @@
                             <select class="form-control select2 account-selection" id="account_to" name="account_to">
                                 {% for account in accounts %}
                                     <option value="{{ account.id }}"
-                                            data-image="{{ account.icon.image.url }}"
+                                            data-image="{{ account.icon.institution.image.url }}"
                                             data-lower_text="Bal: ₱{{ account.balance|floatformat:2|intcomma }}"
                                             {% if forloop.counter == 2 %}selected{% endif %}>
                                         {{ account.name|title }}</option>

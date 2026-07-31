@@ -9,6 +9,7 @@ urlpatterns_views = [
     path('ledger/recurring-payments/', views.recurring_payments, name='recurring_payments'),
     path('budgets/', views.budgets, name='budgets'),
     path('accounts/', views.accounts, name='accounts'),
+    path('account-details/<int:id>', views.account_details, name='account_details'),
     path('categories/', views.categories, name='categories'),
 ]
 

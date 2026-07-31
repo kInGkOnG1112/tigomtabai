@@ -15,8 +15,15 @@
                 <div class="form-group mb-5 select2-modal">
                     <label for="id_description">Institution: <span class="text-danger">*</span></label>
                     <select class="form-control select2 " id="kt_select2_1" name="institution">
-                        {% for icon in icons %}
-                        	<option value="{{ icon.id }}" data-image="{{ icon.image.url }}">{{ icon.name}}</option>
+                        {% regroup institutions by get_type_display as grouped_list %}
+                        {% for group in grouped_list %}
+                            <optgroup label="{{ group.grouper }}">
+                            {% for institution in group.list %}
+                                <option value="{{ institution.id }}"
+                                        data-image="{{ institution.icon.image.url }}"
+                                        data-lower_text="{{ institution.name }}">{{ institution.prefix}}</option>
+                            {% endfor %}
+                            </optgroup>
                         {% endfor %}
                      </select>
                </div>

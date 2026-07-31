@@ -26,12 +26,14 @@ class Account(models.Model):
     is_lock = models.BooleanField(default=False, **OPTIONAL_FIELD)
     is_favorite = models.BooleanField(default=False, **OPTIONAL_FIELD)
     is_archived = models.BooleanField(default=False, **OPTIONAL_FIELD)
-    icon = models.ForeignKey(
-        "main.Icons",
+    institution = models.ForeignKey(
+        "main.Institution",
         on_delete=models.DO_NOTHING,
-        related_name="account_icon"
+        related_name="account_institution",
+        **OPTIONAL_FIELD
     )
     latest_transaction_date = models.DateField(**OPTIONAL_FIELD)
+    total_records = models.IntegerField(default=0, **OPTIONAL_FIELD)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -100,7 +102,8 @@ class Record(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["account_from", "category"]),
+            models.Index(fields=["account_from", "transaction_date"]),
+            models.Index(fields=["account_to", "transaction_date"]),
             models.Index(fields=["transaction_date"]),
             models.Index(fields=["reference_number"]),
         ]
@@ -117,6 +120,15 @@ class Record(models.Model):
             "TRANSFER": "success",
         }
         return mapping.get(self.type, "secondary")
+
+    @property
+    def badge_icon(self):
+        mapping = {
+            "EXPENSE": "right-arrow.png",
+            "INCOME": "left-arrow.png",
+            "TRANSFER": "left-and-right.png",
+        }
+        return mapping.get(self.type, "right-arrow.png")
 
     @property
     def active_account(self):

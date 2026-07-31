@@ -9,6 +9,16 @@ class IconType(models.TextChoices):
     OTHERS = 'OTHERS', 'Others'
 
 
+class InstitutionType(models.TextChoices):
+    BANKS = "BANKS", "Banks"
+    E_WALLET = "E-WALLET", "E-wallet"
+    COOPERATIVE = "COOPERATIVE", "Cooperative"
+    RURAL_BANKS = "RURAL BANKS", "Rural Banks"
+    INTERNATIONAL = "INTERNATIONAL", "International"
+    GENERAL = "GENERAL", "General"
+    OTHERS = "OTHERS", "Others"
+
+
 class Icons(models.Model):
     name = models.CharField(max_length=155, **OPTIONAL_FIELD)
     image = models.ImageField(upload_to=upload_files_to, **OPTIONAL_FIELD)
@@ -26,6 +36,30 @@ class Icons(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Institution(models.Model):
+    name = models.CharField(max_length=255, **OPTIONAL_FIELD)
+    prefix = models.CharField(max_length=100, **OPTIONAL_FIELD)
+    type = models.CharField(
+        max_length=20,
+        choices=InstitutionType.choices,
+        default=InstitutionType.BANKS
+    )
+    icon = models.ForeignKey(
+        "main.Icons",
+        on_delete=models.DO_NOTHING,
+        related_name="institution_icon"
+    )
+    is_active = models.BooleanField(default=True, **OPTIONAL_FIELD)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-pk"]
+        verbose_name_plural = "Institutions"
+
+    def __str__(self):
+        return f"{self.name} ({self.prefix})"
 
 
 

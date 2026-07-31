@@ -128,10 +128,10 @@
                                     <tr class="bg-gray-100 text-left text-uppercase">
                                         <th style="min-width: 170px" class="pl-7">
                                             <span class="text-dark-75">account</span>
-                                        <th style="min-width: 170px">account/category</th>
-                                        <th class="text-right" style="min-width: 100px">amount</th>
-                                        <th style="min-width: 100px">info</th>
-                                        <th style="min-width: 60px">type</th>
+                                        <th style="min-width: 100px"></th>
+                                        <th style="min-width: 150px">account/category</th>
+                                        <th class="text-right" style="min-width: 120px">amount</th>
+                                        <th style="min-width: 80px">info</th>
                                         <th class="text-center" style="min-width: 100px">actions</th>
                                     </tr>
                                 </thead>
@@ -139,7 +139,7 @@
                             </table>
                         </div>
                     </div>
-                    <div id="scrollSentinel" class="text-center p-10">
+                    <div id="scrollSentinel" class="text-center">
                     </div>
                 </div>
             </div>
@@ -151,7 +151,6 @@
 <script>
     const searchQuery = $('#searchQuery')
     const selectStatus = $('#selectStatus')
-    const cursor = $('#cursor')
     const scrollSpinner = $('#scrollSpinner')
     const dateRangePicker = $('#kt_dashboard_daterangepicker')
 
@@ -169,6 +168,7 @@
                 'direction': 'next',
                 'paginated': true,
                 'append': isAppend,
+                'colspan': 6,
                 'component_id': 'divDataList',
                 'scroll_sentinel': 'scrollSentinel',
                 'request_url': '{% url "ledger:subpage_record_list" %}'
@@ -206,38 +206,7 @@
         cursor.val(nextCursor);
         ledgerScroll.setHasMore(hasNextPage);
     }
+
     
-    function deleteRecord(id){
-        Swal.fire(swalWarningConfig({
-            actionText: "Delete record?",
-            bodyText: "This action cannot be undone and will revert all related transactions and balances.",
-        })).then((result) => {
-            if (result.isConfirmed){
-                
-                const closeBtn = $('#closeBtn')
-                const deleteRecordURL = "{% url 'ledger:ajax_delete_record' %}"
-                const redirectionURL = 'flag_redirection'
-                const submitBtn = null
-                
-                const formData = new FormData();
-                formData.append('id', id);
-    
-                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-                if (csrfToken) formData.append('csrfmiddlewaretoken', csrfToken);
-    
-                Ajax.postRequest(
-                    deleteRecordURL,
-                    formData,
-                    submitBtn,
-                    redirectionURL
-                ).then((response) => {
-                    if (response?.success) {
-                        closeBtn.click()
-                        handleFilterChange()
-                    }
-                });
-            }
-        });
-    }
 </script>
 {% endblock %}

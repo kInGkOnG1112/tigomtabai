@@ -1,12 +1,8 @@
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
-
-from django.db import transaction
-from django.db.models import Q, QuerySet, F
-from django.http import JsonResponse
-
+from django.db.models import Q, F
 from ledger.models import Record, RecordType, Account, Category
-from utils.helpers import search_result, paginate_key_set, GenericResponse, generate_unique_ref
+from utils.helpers import search_result, paginate_key_set
 
 
 class RecordForms:
@@ -26,6 +22,13 @@ class RecordForms:
             "account_from",
             "category"
         ).order_by("-transaction_date")
+
+        account_id = data.get("account_id")
+        if account_id:
+            queryset = queryset.filter(
+                Q(account_to_id=account_id) |
+                Q(account_from_id=account_id)
+            )
 
         search = data.get("search", "").strip()
         if search != "":

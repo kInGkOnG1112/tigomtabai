@@ -47,6 +47,15 @@
             {% endif %}
         </td>
 
+        <!-- Badge Column -->
+        <td class="pl-0 py-5">
+            <div class="symbol symbol-45 symbol-light flex-shrink-0">
+                <div class="symbol-label">
+                    <img src="/static/img/{{ data.badge_icon }}" class="h-50 align-self-center" alt="Arrow-left">
+                </div>
+            </div>
+        </td>
+
         <!-- Category / Secondary Account Column -->
         <td class="pl-0 py-5">
             {% if data.type in 'INCOME,EXPENSE' %}
@@ -89,10 +98,10 @@
         <!-- Amount Column -->
         <td>
             <div class="d-flex flex-column flex-grow-1 my-lg-0 my-2 pr-3 text-right">
-                <span class="font-weight-bolder {% if data.type == 'EXPENSE' %}text-danger{% else %}text-success{% endif %}">
-                    {% if data.type == 'EXPENSE' %}-{% else %}+{% endif %}{{ data.amount|floatformat:2|intcomma }}
+                <span class="font-weight-bolder text-{{ data.badge_color }}">
+                    {% if data.type == 'EXPENSE' %}-{% elif data.type == 'INCOME' %}+{% endif %}{{ data.amount|floatformat:2|intcomma }}
                 </span>
-                <span class="text-muted font-weight-bold font-size-sm my-1">Amount</span>
+                <span class="text-muted font-weight-bold font-size-sm my-1">{{ data.type }}</span>
             </div>
         </td>
 
@@ -106,11 +115,6 @@
                     Date: {{ data.transaction_date|date:"F j, Y, g:i A" }}
                 </span>
             </div>
-        </td>
-
-        <!-- Badge Column -->
-        <td>
-            <span class="label label-lg label-light-{{ data.badge_color }} label-inline">{{ data.type }}</span>
         </td>
 
         <!-- Actions Column -->
@@ -133,7 +137,11 @@
         </td>
     </tr>
 {% empty %}
-    {% include 'components/empty.html' %}
+    <tr>
+        <td colspan="{{ payload_data.colspan }}">
+            {% include 'components/empty.html' %}
+        </td>
+    </tr>
 {% endfor %}
 
 <script>
@@ -141,4 +149,37 @@
         {{ pagination.next_cursor|default:"null" }},
         {% if pagination.has_next %}true{% else %}false{% endif %}
     );
+    
+    function deleteRecord(id){
+        Swal.fire(swalWarningConfig({
+            actionText: "Delete record?",
+            bodyText: "This action cannot be undone and will revert all related transactions and balances.",
+        })).then((result) => {
+            if (result.isConfirmed){
+
+                const closeBtn = $('#closeBtn')
+                const deleteRecordURL = "{% url 'ledger:ajax_delete_record' %}"
+                const redirectionURL = 'flag_redirection'
+                const submitBtn = null
+
+                const formData = new FormData();
+                formData.append('id', id);
+
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+                if (csrfToken) formData.append('csrfmiddlewaretoken', csrfToken);
+
+                Ajax.postRequest(
+                    deleteRecordURL,
+                    formData,
+                    submitBtn,
+                    redirectionURL
+                ).then((response) => {
+                    if (response?.success) {
+                        closeBtn.click()
+                        handleFilterChange()
+                    }
+                });
+            }
+        });
+    }
 </script>
