@@ -72,14 +72,14 @@
                             {# Account From / To Display #}
                             <div class="col-lg-4 d-flex flex-wrap">
                                 <div class="flex-shrink-0 mr-4 symbol symbol-60 symbol-circle">
-                                    <img src="{{ record.active_account.icon.image.url }}" alt="{{ record.active_account.name }}">
+                                    <img src="{{ record.active_account.institution.icon.image.url }}" alt="{{ record.active_account.name }}">
                                 </div>
                                 <div class="d-flex flex-column">
                                     <a href="#" class="card-title text-hover-primary font-weight-bolder font-size-lg text-dark mb-1">
                                         {{ record.active_account.name|truncatechars:25 }}
                                     </a>
                                     <span class="text-muted font-weight-bold font-size-sm">
-                                        {{ record.active_account.icon.name|truncatechars:25 }}
+                                        {{ record.active_account.institution.name|truncatechars:25 }}
                                     </span>
                                     <span class="text-muted font-weight-bold font-size-sm">
                                         Account
@@ -100,14 +100,14 @@
                             <div class="col-lg-4 d-flex flex-wrap">
                                 {% if record.type == 'TRANSFER' %}
                                     <div class="flex-shrink-0 mr-4 symbol symbol-60 symbol-circle">
-                                        <img src="{{ record.account_to.icon.image.url }}" alt="{{ record.account_to.name }}">
+                                        <img src="{{ record.account_to.institution.icon.image.url }}" alt="{{ record.account_to.name }}">
                                     </div>
                                     <div class="d-flex flex-column">
                                         <a href="#" class="card-title text-hover-primary font-weight-bolder font-size-lg text-dark mb-1">
                                             {{ record.account_to.name|truncatechars:25 }}
                                         </a>
                                         <span class="text-muted font-weight-bold font-size-sm">
-                                            {{ record.account_to.icon.name|truncatechars:25 }}
+                                            {{ record.account_to.institution.name|truncatechars:25 }}
                                         </span>
                                         <span class="text-muted font-weight-bold font-size-sm">
                                             Account
@@ -171,7 +171,7 @@
                                     {% for account in accounts %}
                                         <option value="{{ account.id }}"
                                                 {% if account.id == record.account_from_id %}selected{% endif %}
-                                                data-image="{{ account.icon.image.url }}"
+                                                data-image="{{ account.institution.icon.image.url }}"
                                                 data-lower_text="Current Bal: ₱{{ account.balance|floatformat:2|intcomma }}">
                                             {{ account.name|title }}
                                         </option>
@@ -207,7 +207,7 @@
                                     {% for account in accounts %}
                                         <option value="{{ account.id }}"
                                                 {% if account.id == record.account_to_id %}selected{% endif %}
-                                                data-image="{{ account.icon.image.url }}"
+                                                data-image="{{ account.institution.icon.image.url }}"
                                                 data-lower_text="{% translate 'Current Bal:' %} ₱{{ account.balance|floatformat:2|intcomma }}">
                                             {{ account.name|title }}
                                         </option>

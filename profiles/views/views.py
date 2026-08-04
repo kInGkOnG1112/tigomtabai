@@ -91,6 +91,7 @@ def account_details(request, id):
         ),
         total_records=Count("id"),
     )
+    print(account_records)
 
     context = {
         "page": "accounts",

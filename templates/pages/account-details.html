@@ -16,229 +16,298 @@
 </div>
 <div class="d-flex flex-column-fluid">
     <div class="container">
-        <div class="card card-custom gutter-b">
-            <div class="card-body">
-                <div class="d-flex">
-                    <div class="flex-shrink-0 mr-7 mt-lg-0 mt-3">
-                        <div class="symbol symbol-50 symbol-lg-100 border border-2 symbol-circle border-light">
-                            <img alt="Pic" src="{{ account.institution.icon.image.url }}">
-                        </div>
-                        <div class="symbol symbol-50 symbol-lg-120 symbol-primary d-none">
-                            <span class="font-size-h3 symbol-label font-weight-boldest">JM</span>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1">
-                        <div class="d-flex align-items-center justify-content-between flex-wrap">
-                            <div class="mr-3">
-                                <a href="#" class="d-flex align-items-center text-dark text-hover-primary font-size-h5 font-weight-bold mr-3">
-                                    {{ account.name }}
-                                    {% if account.is_favorite %}<i class="flaticon2-correct text-success icon-md ml-2"></i>{% endif %}
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card card-custom gutter-b card-stretch">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-end">
+                            <div class="dropdown dropdown-inline" data-toggle="tooltip" title="" data-placement="left" data-original-title="Quick actions" >
+                                <a href="#" class="btn btn-light-secondary btn-icon btn-sm btn-icon-dark-50" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="ki ki-bold-more-hor"></i>
                                 </a>
-                                <div class="d-flex flex-wrap my-2">
-                                    <a href="#" class="text-muted text-hover-primary font-weight-bold text-xl mr-lg-8 mr-5 mb-lg-0 mb-2">{{ account.institution.name }}</a>
-                                    {% if account.is_lock %}
-                                    <a href="#" class="text-muted text-hover-primary font-weight-bold mr-lg-8 mr-5 mb-lg-0 mb-2">
-                                        <span class="svg-icon svg-icon-md svg-icon-gray-500 mr-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                                    <mask fill="white">
-                                                        <use xlink:href="#path-1"></use>
-                                                    </mask>
-                                                    <g></g>
-                                                    <path d="M7,10 L7,8 C7,5.23857625 9.23857625,3 12,3 C14.7614237,3 17,5.23857625 17,8 L17,10 L18,10 C19.1045695,10 20,10.8954305 20,12 L20,18 C20,19.1045695 19.1045695,20 18,20 L6,20 C4.8954305,20 4,19.1045695 4,18 L4,12 C4,10.8954305 4.8954305,10 6,10 L7,10 Z M12,5 C10.3431458,5 9,6.34314575 9,8 L9,10 L15,10 L15,8 C15,6.34314575 13.6568542,5 12,5 Z" fill="#000000"></path>
-                                                </g>
-                                            </svg>
-                                        </span>
-                                        Locked
-                                    </a>
-                                    {% endif %}
-                                    {% if account.is_archived %}
-                                    <a href="#" class="text-muted text-hover-primary font-weight-bold">
-                                        <span class="svg-icon svg-icon-md svg-icon-gray-500 mr-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                                    <rect x="0" y="0" width="24" height="24"></rect>
-                                                    <path d="M4.5,3 L19.5,3 C20.3284271,3 21,3.67157288 21,4.5 L21,19.5 C21,20.3284271 20.3284271,21 19.5,21 L4.5,21 C3.67157288,21 3,20.3284271 3,19.5 L3,4.5 C3,3.67157288 3.67157288,3 4.5,3 Z M8,5 C7.44771525,5 7,5.44771525 7,6 C7,6.55228475 7.44771525,7 8,7 L16,7 C16.5522847,7 17,6.55228475 17,6 C17,5.44771525 16.5522847,5 16,5 L8,5 Z" fill="#000000"></path>
-                                                </g>
-                                            </svg>
-                                        </span>
-                                        Archived
-                                    </a>
-                                    {% endif %}
+                                <div class="dropdown-menu dropdown-menu-md dropdown-menu-right" style="">
+                                    <ul class="navi navi-hover">
+                                        <li class="navi-header pb-1">
+                                            <span class="text-primary text-uppercase font-weight-bold font-size-sm">Options:</span>
+                                        </li>
+                                        <li class="navi-item">
+                                            <a href="#" class="navi-link"
+                                               onclick="lockUnlockAccount(this)"
+                                               data-id="{{ account.id }}"
+                                               data-is_locked="{{ account.is_lock }}">
+                                                <span class="navi-icon">
+                                                    <i class="flaticon2-lock"></i>
+                                                </span>
+                                                <span class="navi-text">{{ account.is_lock|yesno:"Unlock,Lock" }} Account</span>
+                                            </a>
+                                        </li>
+                                        <li class="navi-item">
+                                            <a href="#" class="navi-link"
+                                               onclick="addToArchives(this)"
+                                               data-id="{{ account.id }}"
+                                               data-is_archived="{{ account.is_archived }}">
+                                                <span class="navi-icon">
+                                                    <i class="flaticon2-google-drive-file"></i>
+                                                </span>
+                                                <span class="navi-text">{{ account.is_archived|yesno:"Remove from,Add to" }} Archive</span>
+                                            </a>
+                                        </li>
+                                        <li class="navi-item">
+                                            <a href="#" class="navi-link"
+                                               onclick="addToFavorite(this)"
+                                               data-id="{{ account.id }}"
+                                               data-is_favorite="{{ account.is_favorite }}">
+                                                <span class="navi-icon">
+                                                    <i class="flaticon2-rocket-1"></i>
+                                                </span>
+                                                <span class="navi-text">{{ account.is_favorite|yesno:"Remove from,Add to" }} Favorite</span>
+                                            </a>
+                                        </li>
+                                        <li class="navi-item">
+                                            <a href="#" class="navi-link">
+                                                <span class="navi-icon">
+                                                    <i class="flaticon2-graph-1"></i>
+                                                </span>
+                                                <span class="navi-text">Generate Report</span>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="my-lg-0 my-1">
+                        </div>
+                        <div class="d-flex align-items-center mt-n5">
+                            <div class="flex-shrink-0 mr-7 mt-lg-0 mt-3">
+                                <div class="symbol symbol-70 symbol-lg-100 border border-2 symbol-circle border-light">
+                                    <img alt="Pic" src="{{ account.institution.icon.image.url }}">
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column mr-auto">
+                                <div class="d-flex flex-column mr-auto">
+                                    <a href="#" class="text-dark text-hover-primary font-size-h4 font-weight-bolder mb-1">
+                                    {{ account.name }}
+                                    {% if account.is_favorite %}<i class="flaticon2-correct text-success icon-md ml-2"></i>{% endif %}
+                                    </a>
+                                    <div class="d-flex flex-wrap">
+                                        <a href="#" class="text-muted text-hover-primary font-weight-bold text-xl mr-lg-5 mr-3 mb-lg-0 mb-2">{{ account.institution.name }}</a>
+                                        {% if account.is_lock %}
+                                        <a href="#" class="text-muted text-hover-primary font-weight-bold mr-lg-5 mr-3 mb-lg-0 mb-2">
+                                            <span class="svg-icon svg-icon-md svg-icon-gray-500 mr-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                        <mask fill="white">
+                                                            <use xlink:href="#path-1"></use>
+                                                        </mask>
+                                                        <g></g>
+                                                        <path d="M7,10 L7,8 C7,5.23857625 9.23857625,3 12,3 C14.7614237,3 17,5.23857625 17,8 L17,10 L18,10 C19.1045695,10 20,10.8954305 20,12 L20,18 C20,19.1045695 19.1045695,20 18,20 L6,20 C4.8954305,20 4,19.1045695 4,18 L4,12 C4,10.8954305 4.8954305,10 6,10 L7,10 Z M12,5 C10.3431458,5 9,6.34314575 9,8 L9,10 L15,10 L15,8 C15,6.34314575 13.6568542,5 12,5 Z" fill="#000000"></path>
+                                                    </g>
+                                                </svg>
+                                            </span>
+                                            Locked
+                                        </a>
+                                        {% endif %}
+                                        {% if account.is_archived %}
+                                        <a href="#" class="text-muted text-hover-primary font-weight-bold">
+                                            <span class="svg-icon svg-icon-md svg-icon-gray-500 mr-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                        <rect x="0" y="0" width="24" height="24"></rect>
+                                                        <path d="M4.5,3 L19.5,3 C20.3284271,3 21,3.67157288 21,4.5 L21,19.5 C21,20.3284271 20.3284271,21 19.5,21 L4.5,21 C3.67157288,21 3,20.3284271 3,19.5 L3,4.5 C3,3.67157288 3.67157288,3 4.5,3 Z M8,5 C7.44771525,5 7,5.44771525 7,6 C7,6.55228475 7.44771525,7 8,7 L16,7 C16.5522847,7 17,6.55228475 17,6 C17,5.44771525 16.5522847,5 16,5 L8,5 Z" fill="#000000"></path>
+                                                    </g>
+                                                </svg>
+                                            </span>
+                                            Archived
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-grow-1 font-weight-bold text-dark-50 py-5 py-lg-2 mr-5 max-w-700px">{{ account.description }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class=" card card-custom card-stretch gutter-b">
+                        <div class="card-body d-flex p-0">
+                            <div class="flex-grow-1 bg-light-success p-10 pb-10 card-rounded flex-grow-1 bgi-no-repeat" style="background-position: calc(100% + 0.5rem) bottom; background-size: 35% auto; background-image: url({% static 'media_source/svg/humans/custom-10.svg' %})">
+                                <h5 class="text-dark pb-1 font-weight-bolder">Save Now</h5>
+                                <p class="text-dark-50 pb-1 ">Do not save what is left after spending,
+                                <br>but spend what is left after saving</p>
                                 {% url 'ledger:modal_add_record' as add_record %}
-                                <a href="#" class="btn btn-success font-weight-bolder font-size-sm mr-2"
+                                <a href="#"
                                     data-open-modal
-                                    data-modal-url="{{ add_record }}"
+                                    data-modal-url="{{ add_record }}?account={{ account.id }}"
                                     data-modal-id="{{ modal_id }}"
-                                    data-modal-size="modal-lg">
-                                    <span class="svg-icon svg-icon-md svg-icon-white">
-                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                                <polygon points="0 0 24 0 24 24 0 24"></polygon>
-                                                <path d="M5.85714286,2 L13.7364114,2 C14.0910962,2 14.4343066,2.12568431 14.7051108,2.35473959 L19.4686994,6.3839416 C19.8056532,6.66894833 20,7.08787823 20,7.52920201 L20,20.0833333 C20,21.8738751 19.9795521,22 18.1428571,22 L5.85714286,22 C4.02044787,22 4,21.8738751 4,20.0833333 L4,3.91666667 C4,2.12612489 4.02044787,2 5.85714286,2 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"></path>
-                                                <path d="M11,14 L9,14 C8.44771525,14 8,13.5522847 8,13 C8,12.4477153 8.44771525,12 9,12 L11,12 L11,10 C11,9.44771525 11.4477153,9 12,9 C12.5522847,9 13,9.44771525 13,10 L13,12 L15,12 C15.5522847,12 16,12.4477153 16,13 C16,13.5522847 15.5522847,14 15,14 L13,14 L13,16 C13,16.5522847 12.5522847,17 12,17 C11.4477153,17 11,16.5522847 11,16 L11,14 Z" fill="#000000"></path>
-                                            </g>
-                                        </svg>
-                                    </span>
-                                    Add New Record
-                                </a>
-                                <div class="dropdown dropdown-inline">
-                                    <a href="#" class="btn btn-light-secondary btn-icon btn-sm btn-icon-dark-50" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    data-modal-size="modal-lg"
+                                    class="btn btn-success font-weight-bold py-2 px-6">Add Income</a>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4">
+                <div class=" card card-custom gutter-b">
+                        <div class="card-header border-0 pt-5">
+                            <h3 class="card-title align-items-start flex-column">
+                                <span class="card-label font-weight-bolder text-dark">Account Overview</span>
+                                <span class="text-muted mt-3 font-weight-bold font-size-sm">Month of {% now 'F' %}</span>
+                            </h3>
+                            <div class="card-toolbar">
+                                <div class="dropdown dropdown-inline" data-toggle="tooltip" title="" data-placement="left" data-original-title="Quick actions">
+                                    <a href="#" class="btn btn-clean btn-hover-light-primary btn-sm btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="ki ki-bold-more-hor"></i>
                                     </a>
-                                    <div class="dropdown-menu dropdown-menu-md dropdown-menu-right" style="">
-                                        <ul class="navi navi-hover">
-                                            <li class="navi-header pb-1">
-                                                <span class="text-primary text-uppercase font-weight-bold font-size-sm">Options:</span>
-                                            </li>
+                                    <div class="dropdown-menu dropdown-menu-md dropdown-menu-right">
+                                        <!--begin::Navigation-->
+                                        <ul class="navi navi-hover py-5">
                                             <li class="navi-item">
-                                                <a href="#" class="navi-link"
-                                                   onclick="lockUnlockAccount(this)"
-                                                   data-id="{{ account.id }}"
-                                                   data-is_locked="{{ account.is_lock }}">
+                                                <a href="#" class="navi-link">
                                                     <span class="navi-icon">
-                                                        <i class="flaticon2-lock"></i>
+                                                        <i class="flaticon2-drop"></i>
                                                     </span>
-                                                    <span class="navi-text">{{ account.is_lock|yesno:"Unlock,Lock" }} Account</span>
-                                                </a>
-                                            </li>
-                                            <li class="navi-item">
-                                                <a href="#" class="navi-link"
-                                                   onclick="addToArchives(this)"
-                                                   data-id="{{ account.id }}"
-                                                   data-is_archived="{{ account.is_archived }}">
-                                                    <span class="navi-icon">
-                                                        <i class="flaticon2-google-drive-file"></i>
-                                                    </span>
-                                                    <span class="navi-text">{{ account.is_archived|yesno:"Remove from,Add to" }} Archive</span>
-                                                </a>
-                                            </li>
-                                            <li class="navi-item">
-                                                <a href="#" class="navi-link"
-                                                   onclick="addToFavorite(this)"
-                                                   data-id="{{ account.id }}"
-                                                   data-is_favorite="{{ account.is_favorite }}">
-                                                    <span class="navi-icon">
-                                                        <i class="flaticon2-rocket-1"></i>
-                                                    </span>
-                                                    <span class="navi-text">{{ account.is_favorite|yesno:"Remove from,Add to" }} Favorite</span>
+                                                    <span class="navi-text">New Group</span>
                                                 </a>
                                             </li>
                                             <li class="navi-item">
                                                 <a href="#" class="navi-link">
                                                     <span class="navi-icon">
-                                                        <i class="flaticon2-graph-1"></i>
+                                                        <i class="flaticon2-list-3"></i>
                                                     </span>
-                                                    <span class="navi-text">Generate Report</span>
+                                                    <span class="navi-text">Contacts</span>
+                                                </a>
+                                            </li>
+                                            <li class="navi-item">
+                                                <a href="#" class="navi-link">
+                                                    <span class="navi-icon">
+                                                        <i class="flaticon2-rocket-1"></i>
+                                                    </span>
+                                                    <span class="navi-text">Groups</span>
+                                                    <span class="navi-link-badge">
+                                                        <span class="label label-light-primary label-inline font-weight-bold">new</span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class="navi-item">
+                                                <a href="#" class="navi-link">
+                                                    <span class="navi-icon">
+                                                        <i class="flaticon2-bell-2"></i>
+                                                    </span>
+                                                    <span class="navi-text">Calls</span>
+                                                </a>
+                                            </li>
+                                            <li class="navi-item">
+                                                <a href="#" class="navi-link">
+                                                    <span class="navi-icon">
+                                                        <i class="flaticon2-gear"></i>
+                                                    </span>
+                                                    <span class="navi-text">Settings</span>
+                                                </a>
+                                            </li>
+                                            <li class="navi-separator my-3"></li>
+                                            <li class="navi-item">
+                                                <a href="#" class="navi-link">
+                                                    <span class="navi-icon">
+                                                        <i class="flaticon2-magnifier-tool"></i>
+                                                    </span>
+                                                    <span class="navi-text">Help</span>
+                                                </a>
+                                            </li>
+                                            <li class="navi-item">
+                                                <a href="#" class="navi-link">
+                                                    <span class="navi-icon">
+                                                        <i class="flaticon2-bell-2"></i>
+                                                    </span>
+                                                    <span class="navi-text">Privacy</span>
+                                                    <span class="navi-link-badge">
+                                                        <span class="label label-light-danger label-rounded font-weight-bold">5</span>
+                                                    </span>
                                                 </a>
                                             </li>
                                         </ul>
+                                        <!--end::Navigation-->
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center flex-wrap justify-content-between">
-                            <div class="flex-grow-1 font-weight-bold text-dark-50 py-5 py-lg-2 mr-5 max-w-700px">{{ account.description }}</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="separator separator-solid my-7"></div>
-                <div class="d-flex align-items-center flex-wrap">
-                    <div class="d-flex align-items-center flex-lg-fill mr-5 my-1">
-                        <div class="symbol symbol-45 symbol-light mr-4 flex-shrink-0">
-                            <div class="symbol-label">
-                                <img src="{% static 'img/pie-chart.png' %}" class="h-50 align-self-center" alt="Arrow-left">
+                        <div class="card-body pt-8 row">
+                            <div class="col-lg-12 d-flex align-items-center mb-10 text-center">
+                                <div class="d-flex flex-column text-dark-75 text-center w-100">
+                                    <span class="font-weight-bolder font-size-h1">
+                                    <span class="text-dark-50 font-weight-bold">₱</span> {{ account.balance|floatformat:2|intcomma }}</span>
+                                    <span class="font-weight-bold font-size-sm text-dark-50">Balance</span>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex align-items-center mb-7">
+                                <div class="symbol symbol-45 symbol-light mr-4 flex-shrink-0">
+                                    <div class="symbol-label">
+                                        <img src="{% static 'img/growth.png' %}" class="h-50 align-self-center" alt="Arrow-left">
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-column text-dark-75">
+                                    <span class="font-weight-bolder font-size-h6">
+                                    <span class="text-dark-50 font-weight-bold">₱</span> {{ totals.income|floatformat:2|intcomma }}</span>
+                                    <span class="font-weight-bold font-size-sm text-dark-50">Income</span>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex align-items-center mb-7">
+                                <div class="symbol symbol-45 symbol-light mr-4 flex-shrink-0">
+                                    <div class="symbol-label">
+                                        <img src="{% static 'img/loss.png' %}" class="h-50 align-self-center" alt="Arrow-left">
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-column text-dark-75">
+                                    <span class="font-weight-bolder font-size-h6">
+                                    <span class="text-dark-50 font-weight-bold">₱</span> {{ totals.expense|floatformat:2|intcomma }}</span>
+                                    <span class="font-weight-bold font-size-sm text-dark-50">Expense</span>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex align-items-center mb-7">
+                                <div class="symbol symbol-45 symbol-light mr-4 flex-shrink-0">
+                                    <div class="symbol-label">
+                                        <img src="{% static 'img/left-arrow.png' %}" class="h-50 align-self-center" alt="Arrow-left">
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-column flex-lg-fill">
+                                    <span class="font-weight-bolder font-size-h6">
+                                    <span class="text-dark-50 font-weight-bold">₱</span> {{ totals.transfer_in|floatformat:2|intcomma }}</span>
+                                    <span class="font-weight-bold font-size-sm text-dark-50">Transfer In</span>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex align-items-center mb-7">
+                                <div class="symbol symbol-45 symbol-light mr-4 flex-shrink-0">
+                                    <div class="symbol-label">
+                                        <img src="{% static 'img/right-arrow.png' %}" class="h-50 align-self-center" alt="Arrow-left">
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-column flex-lg-fill">
+                                    <span class="font-weight-bolder font-size-lg">
+                                    <span class="text-dark-50 font-weight-bold">₱</span> {{ totals.transfer_out|floatformat:2|intcomma }}</span>
+                                    <span class="font-weight-bold font-size-sm text-dark-50">Transfer Out</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex flex-column text-dark-75">
-                            <span class="font-weight-bold font-size-sm">Balance</span>
-                            <span class="font-weight-bolder font-size-h6">
-                            <span class="text-dark-50 font-weight-bold">₱</span> {{ account.balance|floatformat:2|intcomma }}</span>
-                        </div>
                     </div>
-                    <div class="d-flex align-items-center flex-lg-fill mr-5 my-1">
-                        <div class="symbol symbol-45 symbol-light mr-4 flex-shrink-0">
-                            <div class="symbol-label">
-                                <img src="{% static 'img/growth.png' %}" class="h-50 align-self-center" alt="Arrow-left">
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column text-dark-75">
-                            <span class="font-weight-bold font-size-sm">Income</span>
-                            <span class="font-weight-bolder font-size-h6">
-                            <span class="text-dark-50 font-weight-bold">₱</span> {{ totals.income|floatformat:2|intcomma }}</span>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center flex-lg-fill mr-5 my-1">
-                        <div class="symbol symbol-45 symbol-light mr-4 flex-shrink-0">
-                            <div class="symbol-label">
-                                <img src="{% static 'img/loss.png' %}" class="h-50 align-self-center" alt="Arrow-left">
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column text-dark-75">
-                            <span class="font-weight-bold font-size-sm">Expense</span>
-                            <span class="font-weight-bolder font-size-h6">
-                            <span class="text-dark-50 font-weight-bold">₱</span> {{ totals.expense|floatformat:2|intcomma }}</span>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center flex-lg-fill mr-5 my-1">
-                        <div class="symbol symbol-45 symbol-light mr-4 flex-shrink-0">
-                            <div class="symbol-label">
-                                <img src="{% static 'img/left-arrow.png' %}" class="h-50 align-self-center" alt="Arrow-left">
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column flex-lg-fill">
-                            <span class="font-weight-bold font-size-sm">Transfer In</span>
-                            <span class="font-weight-bolder font-size-h6">
-                            <span class="text-dark-50 font-weight-bold">₱</span> {{ totals.transfer_in|floatformat:2|intcomma }}</span>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center flex-lg-fill mr-5 my-1">
-                        <div class="symbol symbol-45 symbol-light mr-4 flex-shrink-0">
-                            <div class="symbol-label">
-                                <img src="{% static 'img/right-arrow.png' %}" class="h-50 align-self-center" alt="Arrow-left">
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column flex-lg-fill">
-                            <span class="font-weight-bold font-size-sm">Transfer Out</span>
-                            <span class="font-weight-bolder font-size-lg">
-                            <span class="text-dark-50 font-weight-bold">₱</span> {{ totals.transfer_out|floatformat:2|intcomma }}</span>
-                        </div>
-                    </div>
-                   {% comment %} <div class="d-flex align-items-center flex-lg-fill mr-5 my-1">
-                        <div class="symbol symbol-45 symbol-light mr-4 flex-shrink-0">
-                            <div class="symbol-label">
-                                <img src="{% static 'img/backlog.png' %}" class="h-50 align-self-center" alt="Arrow-left">
-                            </div>
-                        </div>
-                        <div class="d-flex flex-column flex-lg-fill">
-                            <span class="font-weight-bold font-size-sm">Records</span>
-                            <span class="font-weight-bolder font-size-h6">{{ totals.total_records|intcomma }}</span>
-                        </div>
-                    </div>{% endcomment %}
-                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card card-custom gutter-b">
+            <div class="col-lg-8">
+                <div class="card card-custom gutter-b card-stretch">
                     <div class="card-header border-0 py-5">
                         <h3 class="card-title align-items-start flex-column">
                             <span class="card-label font-weight-bolder text-dark">Record list</span>
                             <span class="text-muted mt-3 font-weight-bold font-size-sm">Total of {{ totals.total_records|intcomma }} for the month of {% now "F" %}</span>
                         </h3>
                         <div class="card-toolbar">
-                            <ul class="nav nav-pills nav-pills-sm nav-dark-75 nav-success">
+                            <input type="hidden" name="listDataBy" id="listDataBy" value="monthly">
+                            <ul class="nav nav-pills nav-pills-sm nav-dark-75 nav-primary">
                                 <li class="nav-item">
-                                    <a class="nav-link py-2 px-4 active " data-toggle="tab" href="#">Month</a>
+                                    <a class="nav-link py-2 px-4 active list-data-by" data-value="monthly" data-toggle="tab" href="#">Month</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link py-2 px-4" data-toggle="tab" href="#">Week</a>
+                                    <a class="nav-link py-2 px-4 list-data-by" data-value="weekly" data-toggle="tab" href="#">Week</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link py-2 px-4" data-toggle="tab" href="#">Day</a>
+                                    <a class="nav-link py-2 px-4 list-data-by" data-value="daily" data-toggle="tab" href="#">Day</a>
                                 </li>
                             </ul>
 
@@ -250,9 +319,7 @@
                                 <thead>
                                     <tr class="bg-gray-100 text-left text-uppercase">
                                         <th style="min-width: 170px" class="pl-7">
-                                            <span class="text-dark-75">account</span>
-                                        <th style="min-width: 100px"></th>
-                                        <th style="min-width: 150px">account/category</th>
+                                            <span class="text-dark-75">account/category</span>
                                         <th class="text-right" style="min-width: 120px">amount</th>
                                         <th style="min-width: 80px">info</th>
                                         <th class="text-center" style="min-width: 100px">actions</th>
@@ -272,161 +339,14 @@
 {% endblock %}
 {% block script %}
 <script>
+    const lisDataBy = $('#listDataBy')
     const searchQuery = $('#searchQuery')
     const selectStatus = $('#selectStatus')
     const scrollSpinner = $('#scrollSpinner')
 
     const updateAccountURL = '{% url 'ledger:ajax_update_account' %}'
-    const redirectionURL = 'flag_redirection'
+    const redirectionURL = ''
     const submitBtn = null
-
-    function handleToggleAction({ $el, dataKey, formDataKey, valueMap, onConfirm, onUpdateComplete }) {
-        const id = $el.data('id');
-        const currentValue = String($el.data(dataKey)).toLowerCase() === 'true';
-
-        const config = valueMap[currentValue ? 'active' : 'inactive'];
-
-        const executeRequest = () => {
-            const formData = new FormData();
-            formData.append('id', id);
-            formData.append(formDataKey, config.nextValue);
-
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-            if (csrfToken) formData.append('csrfmiddlewaretoken', csrfToken);
-
-            Ajax.postRequest(
-                updateAccountURL,
-                formData,
-                submitBtn,
-                redirectionURL
-            ).then((response) => {
-                if (response?.success) {
-                    $el.data(dataKey, config.nextValue);
-                    $el.find('.navi-text').text(config.updatedText);
-                    onUpdateComplete(id, config.onComplete);
-                }
-            });
-        };
-
-        if (onConfirm) {
-            onConfirm(config, executeRequest);
-        } else {
-            executeRequest();
-        }
-    }
-
-    function lockUnlockAccount(element) {
-        handleToggleAction({
-            $el: $(element),
-            dataKey: 'is_locked',
-            formDataKey: 'is_lock',
-            valueMap: {
-                active: {
-                    actionText: "Unlock Account?",
-                    bodyText: "This will restore access and allow you to use this account again.",
-                    nextValue: "False",
-                    updatedText: "Lock Account",
-                    onComplete: {
-                        icon: ''
-                    }
-                },
-                inactive: {
-                    actionText: "Lock Account?",
-                    bodyText: "Locking this account will disable it. You won't be able to use it until it is unlocked.",
-                    nextValue: "True",
-                    updatedText: "Unlock Account",
-                    onComplete: {
-                        icon: '<i class="icon-nm fas fa-lock text-muted ml-1"></i>'
-                    }
-                }
-            },
-            onConfirm: (config, proceed) => {
-                Swal.fire(swalWarningConfig({
-                    actionText: config.actionText,
-                    bodyText: config.bodyText
-                })).then((result) => {
-                    if (result.isConfirmed) proceed();
-                });
-            },
-            onUpdateComplete: (id, onComplete) => {
-                $(`#iconLock${id}`).html(onComplete.icon);
-            }
-        });
-    }
-
-    function addToFavorite(element) {
-        handleToggleAction({
-            $el: $(element),
-            dataKey: 'is_favorite',
-            formDataKey: 'is_favorite',
-            valueMap: {
-                active: {
-                    nextValue: "False",
-                    updatedText: "Add to Favorite",
-                    onComplete: {
-                        icon: ''
-                    }
-                },
-                inactive: {
-                    nextValue: "True",
-                    updatedText: "Remove from Favorite",
-                    onComplete: {
-                        icon: '<i class="flaticon2-correct text-success icon-md ml-2"></i>'
-                    }
-                }
-            },
-            onConfirm: null,
-            onUpdateComplete: (id, onComplete) => {
-                $(`#iconFavorite${id}`).html(onComplete.icon);
-            }
-        });
-    }
-
-    function addToArchives(element) {
-        handleToggleAction({
-            $el: $(element),
-            dataKey: 'is_archived',
-            formDataKey: 'is_archived',
-            imageClass: 'archive-image',
-            valueMap: {
-                active: {
-                    actionText: "Remove from archives?",
-                    bodyText: "Removing this account from the archives will unhide it and restore full access.",
-                    nextValue: "False",
-                    updatedText: "Add to Archives",
-                    onComplete: {
-                        removeClass: "archive-image",
-                        buttonAddClass: "btn-light-success",
-                        buttonRemoveClass: "btn-secondary"
-                    }
-                },
-                inactive: {
-                    actionText: "Add to archives?",
-                    bodyText: "Archiving this account will hide it from view and disable its use until it is unarchived.",
-                    nextValue: "True",
-                    updatedText: "Remove from Archives",
-                    onComplete: {
-                        addClass: "archive-image",
-                        buttonAddClass: "btn-secondary",
-                        buttonRemoveClass: "btn-light-success"
-                    }
-                }
-            },
-            onConfirm: (config, proceed) => {
-                Swal.fire(swalWarningConfig({
-                    actionText: config.actionText,
-                    bodyText: config.bodyText
-                })).then((result) => {
-                    if (result.isConfirmed) proceed();
-                });
-            },
-            onUpdateComplete: (id, onComplete) => {
-                console.log(onComplete)
-                $(`#cardAccount${id}`).removeClass(onComplete.removeClass).addClass(onComplete.addClass);
-                $(`#viewDetails${id}`).removeClass(onComplete.buttonRemoveClass).addClass(onComplete.buttonAddClass);
-            }
-        });
-    }
 
     const ledgerScroll = new InfiniteScrollController({
         sentinelSelector: '#scrollSentinel',
@@ -442,7 +362,8 @@
                 'direction': 'next',
                 'paginated': true,
                 'append': isAppend,
-                'colspan': 5,
+                'colspan': 4,
+                'list_data_by': lisDataBy.val(),
                 'component_id': 'divDataList',
                 'scroll_sentinel': 'scrollSentinel',
                 'request_url': '{% url "ledger:subpage_record_list" %}',
@@ -465,5 +386,20 @@
         cursor.val(nextCursor);
         ledgerScroll.setHasMore(hasNextPage);
     }
+
+    $('.list-data-by').on('click', function(e) {
+      e.preventDefault();
+      $(this).closest('.nav-pills').find('.list-data-by').removeClass('active');
+      $(this).addClass('active');
+
+      let listDataBy = $(this).data('value')
+      if (listDataBy !== lisDataBy.val()){
+        lisDataBy.val($(this).data('value'))
+        handleFilterChange()
+      }
+
+    })
+
 </script>
+<script src="{% static 'js/account-scripts.js' %}"></script>
 {% endblock %}

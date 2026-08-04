@@ -41,6 +41,7 @@ def add_account(request):
 
 @login_required
 def add_record(request):
+    data = request.GET
     accounts = Account.objects.filter(
         owner=request.user,
         is_archived=False
@@ -53,7 +54,8 @@ def add_record(request):
     context = {
         "income_category": [c for c in categories if c.type == CategoryType.INCOME],
         "expense_category": [c for c in categories if c.type == CategoryType.EXPENSE],
-        "accounts": accounts
+        "accounts": accounts,
+        "account_id": int(data.get("account")),
     }
     return render(request, template_name="screens/modals/add-record.html", context=context)
 
@@ -65,7 +67,7 @@ def update_record(request, id):
     accounts = Account.objects.filter(
         owner=request.user,
         is_archived=False
-    ).select_related("icon")
+    ).select_related("institution")
 
     categories = Category.objects.filter(
         is_active=True

@@ -1,6 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from django.db.models import Q, F
+from django.utils import timezone
+
 from ledger.models import Record, RecordType, Account, Category
 from utils.helpers import search_result, paginate_key_set
 
@@ -29,6 +31,36 @@ class RecordForms:
                 Q(account_to_id=account_id) |
                 Q(account_from_id=account_id)
             )
+
+        list_data_by = data.get("list_data_by")
+        if list_data_by:
+            now = timezone.now()
+            queryset = queryset.filter(
+                transaction_date__year=now.year
+            )
+
+            if list_data_by == "monthly":
+                queryset = queryset.filter(
+                    transaction_date__month=now.month
+                )
+
+            elif list_data_by == "weekly":
+                start_of_week = (now - timedelta(days=now.weekday())).replace(
+                    hour=0,
+                    minute=0,
+                    second=0,
+                    microsecond=0
+                )
+                queryset = queryset.filter(
+                    transaction_date__gte=start_of_week,
+                    transaction_date__lte=now
+                )
+
+            else:
+                queryset = queryset.filter(
+                    transaction_date__day=now.day
+                )
+
 
         search = data.get("search", "").strip()
         if search != "":
@@ -83,11 +115,13 @@ class RecordForms:
             return response
 
         record_id = data.get("id")
-        try:
-            record = Record.objects.get(id=record_id)
-        except Record.DoesNotExist:
-            response["error_message"] = "Record does not exist."
-            return response
+        record = None
+        if record_id:
+            try:
+                record = Record.objects.get(id=record_id)
+            except Record.DoesNotExist:
+                response["error_message"] = "Record does not exist."
+                return response
 
         cleaned_data.update(
             {
@@ -184,3 +218,5 @@ class RecordForms:
             Account.objects.filter(id=account_id).update(balance=F("balance") + delta)
 
         return True
+
+

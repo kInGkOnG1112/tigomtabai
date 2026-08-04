@@ -52,9 +52,15 @@ def account_list(request):
 @require_GET
 def record_list(request):
     response = RecordForms(request).list_data()
+    payload_data = request.GET.dict()
+    account_id = payload_data.get("account_id", "")
+
+    template = "table-2.html" if account_id else "table-1.html"
+
     context = {
         "data_list": response["results"],
         "pagination": response["pagination"],
         "payload_data": request.GET.dict(),
+        "account_id": int(account_id) if account_id else None
     }
-    return render(request, template_name="components/tables/table-1.html", context=context)
+    return render(request, template_name=f"components/tables/{template}", context=context)
