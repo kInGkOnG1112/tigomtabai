@@ -56,6 +56,12 @@ class Category(models.Model):
         choices=CategoryType.choices,
         default=CategoryType.INCOME
     )
+    added_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="added_by_user",
+        **OPTIONAL_FIELD
+    )
     is_active = models.BooleanField(default=True, **OPTIONAL_FIELD)
     is_default = models.BooleanField(default=True, **OPTIONAL_FIELD)
     created_at = models.DateTimeField(auto_now_add=True)

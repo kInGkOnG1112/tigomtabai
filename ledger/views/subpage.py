@@ -15,6 +15,10 @@ def category_list(request):
 
     queryset = Category.objects.all().order_by("name")
 
+    type = data.get("type", "")
+    if type:
+        queryset = queryset.filter(type=type.upper())
+
     search = data.get("search", "").strip()
     if search != "":
         orm_lookups = ["name__icontains"]
@@ -25,7 +29,7 @@ def category_list(request):
         "payload_data": data.dict(),
         "col_class": "col-lg-4"
     }
-    return render(request, template_name="components/cards/card-symbol.html", context=context)
+    return render(request, template_name="components/cards/card-symbol-2.html", context=context)
 
 
 @login_required

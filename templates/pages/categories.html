@@ -1,6 +1,6 @@
 {% extends 'base/base.html' %}
 
-{% load static %}
+{% load static humanize %}
 
 {% block content %}
 
@@ -94,6 +94,32 @@
 </div>
 <div class="d-flex flex-column-fluid">
     <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card card-custom gutter-b">
+                    <div class="card-header border-0 pt-5">
+                        <h3 class="card-title align-items-start flex-column mb-5">
+                            <span class="card-label font-weight-bolder text-dark mb-1">Income</span>
+                            <span class="text-muted mt-2 font-weight-bold font-size-sm">{{ totals.income|intcomma }} Income Category</span>
+                        </h3>
+                    </div>
+                    <div class="card-body pt-2" id="incomeDataList">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card card-custom  gutter-b">
+                    <div class="card-header border-0 pt-5">
+                        <h3 class="card-title align-items-start flex-column mb-5">
+                            <span class="card-label font-weight-bolder text-dark mb-1">Expense</span>
+                            <span class="text-muted mt-2 font-weight-bold font-size-sm">{{ totals.expense|intcomma }} Expense Category</span>
+                        </h3>
+                    </div>
+                    <div class="card-body pt-2" id="expenseDataList">
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row" id="divDataList">
         </div>
     </div>
@@ -105,12 +131,23 @@
     const selectStatus = $('#selectStatus')
     
     function categoryInputChange() {
-        const defaultFormData = {
+        const incomeFormData = {
             'search': searchQuery.val(),
             'status': selectStatus.val(),
-            'request_url': '{% url 'ledger:subpage_category_list' %}'
+            'type': 'income',
+            'request_url': '{% url 'ledger:subpage_category_list' %}',
+            'component_id': 'incomeDataList'
         }
-        ajaxSubpageRequest(buildFormData(defaultFormData));
+        ajaxSubpageRequest(buildFormData(incomeFormData));
+
+        const expenseFormData = {
+            'search': searchQuery.val(),
+            'status': selectStatus.val(),
+            'type': 'expense',
+            'request_url': '{% url 'ledger:subpage_category_list' %}',
+            'component_id': 'expenseDataList'
+        }
+        ajaxSubpageRequest(buildFormData(expenseFormData));
     }
     
     categoryInputChange()

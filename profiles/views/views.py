@@ -6,7 +6,7 @@ from django.db.models.functions import Coalesce
 from django.shortcuts import render
 from django.utils import timezone
 
-from ledger.models import Account, Record, RecordType
+from ledger.models import Account, Record, RecordType, Category, CategoryType
 from utils.decorators import login_required
 from utils.helpers import get_global_context
 
@@ -91,7 +91,6 @@ def account_details(request, id):
         ),
         total_records=Count("id"),
     )
-    print(account_records)
 
     context = {
         "page": "accounts",
@@ -106,9 +105,20 @@ def account_details(request, id):
 
 @login_required
 def categories(request):
+    category = Category.objects.filter(
+        Q(added_by=request.user) |
+        Q(is_default=True)
+    )
+
+    totals = category.aggregate(
+        income=Count("id", filter=Q(type=CategoryType.INCOME)),
+        expense=Count("id", filter=Q(type=CategoryType.EXPENSE))
+    )
+
     context = {
         "page": "categories",
-        "title": "Categories"
+        "title": "Categories",
+        "totals": totals
     }
     context = get_global_context(request, context)
     return render(request, "pages/categories.html", context)
