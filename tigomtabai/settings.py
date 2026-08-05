@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'mathfilters',
     'ledger.apps.LedgerConfig',
     'main.apps.MainConfig',
     'profiles.apps.ProfilesConfig'

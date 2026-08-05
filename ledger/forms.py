@@ -3,7 +3,7 @@ from decimal import Decimal, InvalidOperation
 from django.db.models import Q, F
 from django.utils import timezone
 
-from ledger.models import Record, RecordType, Account, Category
+from ledger.models import Record, RecordType, Account, Category, Budget
 from utils.helpers import search_result, paginate_key_set
 
 

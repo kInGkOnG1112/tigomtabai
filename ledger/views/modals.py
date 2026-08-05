@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from ledger.models import Account, Category, CategoryType, Record
+from ledger.models import Account, Category, CategoryType, Record, Budget
 from main.models import Icons, IconType, Institution
 from utils.decorators import login_required
 
@@ -40,6 +40,20 @@ def add_account(request):
 
 
 @login_required
+def add_budget(request, category_id):
+    category = Category.objects.get(id=category_id)
+    context = {"category": category}
+    return render(request, template_name="screens/modals/add-budget.html", context=context)
+
+
+@login_required
+def update_budget(request, budget_id):
+    budget = Budget.objects.get(id=budget_id)
+    context = {"budget": budget}
+    return render(request, template_name="screens/modals/update-budget.html", context=context)
+
+
+@login_required
 def add_record(request):
     data = request.GET
     accounts = Account.objects.filter(
@@ -55,7 +69,7 @@ def add_record(request):
         "income_category": [c for c in categories if c.type == CategoryType.INCOME],
         "expense_category": [c for c in categories if c.type == CategoryType.EXPENSE],
         "accounts": accounts,
-        "account_id": int(data.get("account")),
+        "account_id": int(data.get("account")) if data.get("account") else None,
     }
     return render(request, template_name="screens/modals/add-record.html", context=context)
 
@@ -65,8 +79,7 @@ def update_record(request, id):
     record = Record.objects.get(id=id)
 
     accounts = Account.objects.filter(
-        owner=request.user,
-        is_archived=False
+        owner=request.user
     ).select_related("institution")
 
     categories = Category.objects.filter(

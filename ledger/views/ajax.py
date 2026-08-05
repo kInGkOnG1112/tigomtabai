@@ -1,5 +1,5 @@
 from datetime import datetime
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 
 from django.db import transaction
 from django.db.models import F
@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 from ledger.forms import RecordForms
 from utils.decorators import login_required
 from utils.helpers import GenericResponse, generate_unique_ref
-from ledger.models import Category, Account, RecordType, Record
+from ledger.models import Category, Account, RecordType, Record, Budget
 from main.models import Icons, Institution
 
 
@@ -195,6 +195,17 @@ def add_record(request):
                     record.account_from = account
 
                 account.save()
+                record.save()
+
+                budget = Budget.objects.filter(
+                    category=data.get("category"),
+                    owner=request.user,
+                    month=record.transaction_date.month,
+                    year=record.transaction_date.year
+                ).first()
+
+                if budget:
+                    budget.recalculate_spent()
 
             elif record_type == RecordType.TRANSFER:
                 account_from = data.get("account_from")
@@ -212,7 +223,7 @@ def add_record(request):
                 account_from.save()
                 account_to.save()
 
-            record.save()
+                record.save()
 
         return JsonResponse(GenericResponse.success(
             request=request,
@@ -285,6 +296,18 @@ def update_record(request):
                     latest_transaction_date=transaction_date,
                 )
 
+                record.save()
+
+                budget = Budget.objects.filter(
+                    category=record.category,
+                    owner=request.user,
+                    month=record.transaction_date.month,
+                    year=record.transaction_date.year
+                ).first()
+
+                if budget:
+                    budget.recalculate_spent()
+
             elif record_type == RecordType.TRANSFER:
                 account_from = data.get("account_from")
                 account_to = data.get("account_to")
@@ -302,7 +325,7 @@ def update_record(request):
                     latest_transaction_date=transaction_date,
                 )
 
-            record.save()
+                record.save()
 
         return JsonResponse(GenericResponse.success(
             request=request,
@@ -337,8 +360,18 @@ def delete_record(request):
         with transaction.atomic():
             record_form = RecordForms(request)
             record_form.revert_transaction(record)
-            record.delete()
 
+            budget = Budget.objects.filter(
+                category=record.category,
+                owner=request.user,
+                month=record.transaction_date.month,
+                year=record.transaction_date.year
+            ).first()
+
+            if budget:
+                budget.recalculate_spent()
+
+            record.delete()
 
         return JsonResponse(GenericResponse.success(
             request=request,
@@ -348,6 +381,108 @@ def delete_record(request):
 
     except Exception as e:
         print(str(e))
+        return JsonResponse(GenericResponse.error(
+            request=request,
+            method=method,
+            message=str(e),
+        ))
+
+
+@login_required
+@require_POST
+def add_budget(request):
+    data = request.POST
+    category_name = data.get("category_name")
+    method = f"Add Budget for {category_name}"
+    try:
+        now = datetime.now()
+        category_id = data.get("category_id")
+        existed = Budget.objects.filter(
+            category_id=category_id,
+            owner=request.user,
+            month=now.month,
+            year=now.year,
+        ).first()
+
+        if existed:
+            return JsonResponse(GenericResponse.error(
+                request=request,
+                method=method,
+                user_message=f"Budget for {category_name} category was already set.",
+            ))
+
+        with transaction.atomic():
+            category = Category.objects.get(id=data.get("category_id"))
+            limit_amount = Decimal(data.get("amount", "0").replace(",", ""))
+
+            budget = Budget.objects.create(
+                category=category,
+                owner=request.user,
+                month=now.month,
+                year=now.year,
+                limit=limit_amount
+            )
+            budget.recalculate_spent()
+
+        return JsonResponse(GenericResponse.success(
+            request=request,
+            method=method,
+            message=f"Budget for {category_name} category was successfully added"
+        ))
+
+    except Exception as e:
+        return JsonResponse(GenericResponse.error(
+            request=request,
+            method=method,
+            message=str(e),
+        ))
+
+
+@login_required
+@require_POST
+def update_budget(request):
+    data = request.POST
+    category_name = data.get("category_name")
+    method = f"Update Budget for {category_name}"
+    try:
+        with transaction.atomic():
+            budget = Budget.objects.get(id=data.get("budget_id"))
+            budget.limit = Decimal(data.get("amount", budget.limit).replace(",", ""))
+            budget.save()
+            budget.recalculate_spent()
+
+        return JsonResponse(GenericResponse.success(
+            request=request,
+            method=method,
+            message=f"Budget for {category_name} category was successfully updated"
+        ))
+
+    except Exception as e:
+        return JsonResponse(GenericResponse.error(
+            request=request,
+            method=method,
+            message=str(e),
+        ))
+
+
+@login_required
+@require_POST
+def delete_budget(request):
+    data = request.POST
+    category_name = data.get("category_name")
+    method = f"Removed Budget for {category_name}"
+    try:
+        with transaction.atomic():
+            budget = Budget.objects.get(id=data.get("budget_id"))
+            budget.delete()
+
+        return JsonResponse(GenericResponse.success(
+            request=request,
+            method=method,
+            message=f"Budget for {category_name} category was successfully removed"
+        ))
+
+    except Exception as e:
         return JsonResponse(GenericResponse.error(
             request=request,
             method=method,

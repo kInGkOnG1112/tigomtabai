@@ -1,0 +1,82 @@
+{% load static %}
+<form id="setBudgetForm" method="POST" action="">
+    {% csrf_token %}
+    <input type="hidden" name="category_id" id="category_id" value="{{ category.id }}">
+    <input type="hidden" name="category_name" id="category_name" value="{{ category.name }}">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Set Budget</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i aria-hidden="true" class="ki ki-close"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row justify-content-center">
+            <div class="col-lg-12 mt-2">
+                <div class="form-group form-group-last">
+                    <div class="alert alert-custom alert-default" role="alert">
+                        <div class="alert-icon">
+                            <span class="svg-icon svg-icon-primary svg-icon-xl">
+                                <span class="svg-icon svg-icon-primary svg-icon-2x">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <rect x="0" y="0" width="24" height="24"></rect>
+                                            <circle fill="#000000" opacity="0.3" cx="12" cy="12" r="10"></circle>
+                                            <rect fill="#000000" x="11" y="10" width="2" height="7" rx="1"></rect>
+                                            <rect fill="#000000" x="11" y="7" width="2" height="2" rx="1"></rect>
+                                        </g>
+                                    </svg>
+                                </span>
+                            </span>
+                        </div>
+                        <div class="alert-text">Set a budget amount for <strong>{{ category.name }}</strong> category to establish a safe spending boundary for the month {% now 'F Y' %}.</div>
+                    </div>
+                </div>
+                <div class="form-group mb-5">
+                    <label for="amount">Amount: <span class="text-danger">*</span></label>
+                    <input type="text" id="amount" name="amount" class="form-control amount min-h-50px font-size-h3" placeholder="0.00" inputmode="decimal" required/>
+                    <span class="form-text text-muted">Set a monthly spending limit for the {{ category.name }} category</span>
+               </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" id="closeBtn" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Cancel</button>
+        <button type="submit" id="submitBtn" class="btn btn-primary font-weight-bold">Submit</button>
+    </div>
+</form>
+<script src="{% static 'js/autonumeric.js' %}"></script>
+<script>
+    $(document).ready(function() {
+
+        $('#kt_select2_1').select2({
+            placeholder: "Select an institution",
+            templateResult: formatState,
+            templateSelection: formatState,
+        });
+
+        const setBudgetForm = $('#setBudgetForm')
+        setBudgetForm.submit(function (e) {
+            e.preventDefault()
+            const redirectionURL = 'flag_redirection'
+            const closeBtn = $('#closeBtn')
+            const submitBtn = $('#submitBtn')
+            const requestURL = '{% url 'ledger:ajax_add_budget' %}'
+            const formData = new FormData(setBudgetForm[0]);
+            Ajax.postRequest(
+                requestURL,
+                formData,
+                submitBtn,
+                redirectionURL,
+            ).then(function (response) {
+                if (response.success){
+                    closeBtn.click();
+                    categoryInputChange();
+                    budgetInputChange();
+                    resetInputs();
+                }
+            })
+        })
+    });
+
+</script>

@@ -171,6 +171,7 @@
                                     {% for account in accounts %}
                                         <option value="{{ account.id }}"
                                                 {% if account.id == record.account_from_id %}selected{% endif %}
+                                                {% if account.is_archived or account.is_lock %}disabled{% endif %}
                                                 data-image="{{ account.institution.icon.image.url }}"
                                                 data-lower_text="Current Bal: ₱{{ account.balance|floatformat:2|intcomma }}">
                                             {{ account.name|title }}
@@ -207,6 +208,7 @@
                                     {% for account in accounts %}
                                         <option value="{{ account.id }}"
                                                 {% if account.id == record.account_to_id %}selected{% endif %}
+                                                {% if account.is_archived or account.is_lock %}disabled{% endif %}
                                                 data-image="{{ account.institution.icon.image.url }}"
                                                 data-lower_text="{% translate 'Current Bal:' %} ₱{{ account.balance|floatformat:2|intcomma }}">
                                             {{ account.name|title }}
@@ -220,8 +222,8 @@
                                 <select class="form-control select2 account-selection" id="source_account" name="{{ record.type|lower }}_account">
                                     {% for account in accounts %}
                                         <option value="{{ account.id }}"
-                                                {% if account.id == record.account_to_id %}selected{% endif %}
-                                                data-image="{{ account.icon.image.url }}"
+                                                {% if account.id == record.active_account.id %}selected{% endif %}
+                                                data-image="{{ account.institution.icon.image.url }}"
                                                 data-lower_text="{% translate 'Current Bal:' %} ₱{{ account.balance|floatformat:2|intcomma }}">
                                             {{ account.name|title }}
                                         </option>

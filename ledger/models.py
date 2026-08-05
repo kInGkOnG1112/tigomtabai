@@ -1,5 +1,10 @@
+from decimal import Decimal
+
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Sum, Value
+from django.db.models.functions import Coalesce
+
 from utils.model_helpers import OPTIONAL_FIELD
 
 
@@ -72,6 +77,62 @@ class Category(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.type})"
+
+
+class Budget(models.Model):
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        related_name="budget_category",
+        **OPTIONAL_FIELD
+    )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="owner_budget"
+    )
+    limit = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    spent = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    month = models.IntegerField(**OPTIONAL_FIELD)
+    year = models.IntegerField(**OPTIONAL_FIELD)
+    percentage = models.IntegerField(default=0, **OPTIONAL_FIELD)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["category", "owner"])
+        ]
+        ordering = ["-pk"]
+
+    def __str__(self):
+        return f"{self.category.name} - ({self.month}/{self.year})"
+
+    @property
+    def badge_color(self):
+        if self.percentage <= 0:
+            return "danger"
+        return "success"
+
+    def remaining(self):
+        remaining = self.limit - self.spent
+        return remaining if remaining > 0 else 0
+
+    def recalculate_spent(self):
+        spent = Record.objects.filter(
+            category_id=self.category_id,
+            transaction_date__month=self.month,
+            transaction_date__year=self.year,
+            type=RecordType.EXPENSE
+        ).aggregate(
+            spent=Coalesce(Sum("amount"), Value(Decimal("0")))
+        )["spent"]
+
+        limit = self.limit
+        remaining = max(limit - spent, Decimal("0")) if limit > 0 else Decimal("0")
+
+        self.spent = spent
+        self.percentage = round((remaining / limit * 100) if limit > 0 else 0, 2)
+        self.save(update_fields=["spent", "percentage"])
 
 
 class Record(models.Model):

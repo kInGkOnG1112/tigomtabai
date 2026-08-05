@@ -8,7 +8,7 @@ from unfold.contrib.filters.admin import (
 from .models import (
     Account,
     Category,
-    Record,
+    Record, Budget,
 )
 
 
@@ -43,6 +43,28 @@ class CategoryAdmin(ModelAdmin):
     list_filter = (
         ("is_active", BooleanRadioFilter),
         ("type", ChoicesDropdownFilter)
+    )
+
+
+@admin.register(Budget)
+class BudgetAdmin(ModelAdmin):
+    paginator = InfinitePaginator
+    list_filter_submit = True
+    list_per_page = 15
+
+    raw_id_fields = ("category", "owner")
+    list_display = (
+        "category",
+        "owner",
+        "limit",
+        "spent",
+        "month",
+        "year",
+        "created_at"
+    )
+    list_filter = (
+        ("month", ChoicesDropdownFilter),
+        ("year", ChoicesDropdownFilter)
     )
 
 

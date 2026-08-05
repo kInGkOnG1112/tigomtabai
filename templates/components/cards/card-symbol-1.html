@@ -69,12 +69,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-n7">
-                    <div class="symbol symbol-circle symbol-lg-90 symbol-sm-70 border border-3 border-light">
+                <div class="mt-n10 mb-2">
+                    <div class="symbol symbol-circle symbol-lg-70 symbol-sm-70 border border-3 border-light">
                         <img class="border border-3 border-white" src="{{ data.institution.icon.image.url }}" alt="image">
                     </div>
                     <div class="d-flex flex-column">
-                        <a href="#" class="text-dark text-hover-primary font-size-h4 font-weight-bolder mb-1">
+                        <a href="#" class="text-dark text-hover-primary font-size-h6 font-weight-bolder mb-1">
                             {{ data.name }}
                             <span id="iconFavorite{{ data.id }}">
                             {% if data.is_favorite %}
@@ -82,7 +82,7 @@
                             {% endif %}
                             </span>
                         </a>
-                        <span class="text-muted font-weight-bold">
+                        <span class="text-dark-75 font-weight-bold">
                             {{ data.institution.icon.name }}
                             <span id="iconLock{{ data.id }}">
                             {% if data.is_lock %}
@@ -93,8 +93,8 @@
                     </div>
                 </div>
                 <div class="mt-auto " >
-                    <p class="mb-7 text-center">{{ data.description|truncatechars:100 }}</p>
-                    <div class="mb-7 d-flex align-items-center flex-wrap">
+                    <span class="text-center text-muted font-weight-bold">{{ data.description|truncatechars:60 }}</span>
+                    <div class="my-4 d-flex align-items-center flex-wrap">
                         <div class="d-flex flex-column text-center w-100">
                             <span class="font-weight-bolder pt-1 font-size-h3">
                                 <span class="font-weight-bold text-dark-50">₱</span>
@@ -105,10 +105,10 @@
                     </div>
                 </div>
             </div>
-            <div class="card-footer d-flex align-items-sm-center flex-wrap flex-column flex-sm-row">
+            <div class="card-footer d-flex align-items-sm-center flex-wrap flex-column flex-sm-row p-7">
                  <a href="{% url 'profile:account_details' data.id %}"
                     id="viewDetails{{ data.id }}"
-                    class="btn btn-block btn-sm {% if data.is_archived %}btn-secondary{% else %}btn-primary{% endif %} font-weight-bolder text-uppercase py-4">view account</a>
+                    class="btn btn-block btn-sm {% if data.is_archived %}btn-secondary{% else %}btn-primary{% endif %} font-weight-bolder text-sm text-uppercase py-4">view account</a>
             </div>
         </div>
     </div>

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db.models import Q
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
@@ -5,15 +7,29 @@ from django.views.decorators.http import require_GET
 from ledger.forms import RecordForms
 from utils.decorators import login_required
 from utils.helpers import search_result
-from ledger.models import Category, Account, Record
+from ledger.models import Category, Account, Record, Budget
 
 
 @login_required
 @require_GET
 def category_list(request):
     data = request.GET
+    template = data.get("template") if data.get("template") else "card-symbol-2.html"
 
-    queryset = Category.objects.all().order_by("name")
+    queryset = Category.objects.filter(
+        Q(is_default=True) | Q(added_by=request.user)
+    ).order_by("name")
+
+    usage = data.get("usage", "")
+    if usage and usage == "budget":
+        now = datetime.now()
+        budget_ids = Budget.objects.filter(
+            owner=request.user,
+            month=now.month,
+            year=now.year
+        ).values_list("category_id", flat=True)
+
+        queryset = queryset.exclude(id__in=budget_ids)
 
     type = data.get("type", "")
     if type:
@@ -29,7 +45,7 @@ def category_list(request):
         "payload_data": data.dict(),
         "col_class": "col-lg-4"
     }
-    return render(request, template_name="components/cards/card-symbol-2.html", context=context)
+    return render(request, template_name=f"components/cards/{template}", context=context)
 
 
 @login_required
@@ -47,7 +63,7 @@ def account_list(request):
     context = {
         "data_list": queryset,
         "payload_data": data.dict(),
-        "col_class": "col-lg-4"
+        "col_class": "col-lg-3"
     }
     return render(request, template_name="components/cards/card-symbol-1.html", context=context)
 
@@ -68,3 +84,32 @@ def record_list(request):
         "account_id": int(account_id) if account_id else None
     }
     return render(request, template_name=f"components/tables/{template}", context=context)
+
+
+@login_required
+@require_GET
+def budget_list(request):
+    data = request.GET
+    now = datetime.now()
+
+    queryset = Budget.objects.filter(owner=request.user)
+
+    month = data.get("month", now.month)
+    year = data.get("year", now.year)
+
+    if month:
+        queryset = queryset.filter(month=int(month))
+
+    if year:
+        queryset = queryset.filter(year=int(year))
+
+    search = data.get("search", "").strip()
+    if search != "":
+        orm_lookups = ["category__name__icontains"]
+        queryset = search_result(queryset, search, orm_lookups)
+
+    context = {
+        "data_list": queryset,
+        "payload_data": data.dict(),
+    }
+    return render(request, template_name="components/cards/card-symbol-3.html", context=context)
