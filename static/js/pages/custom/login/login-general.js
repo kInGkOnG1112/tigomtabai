@@ -65,7 +65,18 @@ var KTLogin = function() {
 						submitBtn,
 						redirectionURL,
 						false
-					)
+					).then((response) => {
+						if (response.success){
+							 window.location.href = redirectionURL
+						}else{
+							Swal.fire({
+								allowOutsideClick: false,
+								title: response.success ? 'Success!' : 'Error!',
+								text: response.message || (response.success ? 'Operation successful.' : 'An error occurred.'),
+								icon: response.success ? "success" : "error",
+							});
+						}
+					})
 				} else {
 					swal.fire({
 		                text: "Sorry, looks like there are some errors detected, please try again.",

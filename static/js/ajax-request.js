@@ -53,7 +53,7 @@ class AjaxRequest {
         }
     }
 
-    subpageRequest(requestURL, formData, divComponent, timer=1000){
+    subpageRequest(requestURL, formData, divComponent, timer=5000){
         const divLoader = `
             <div class="col-lg-12 p-10">
                 <div class="d-flex justify-content-center align-items-center p100">
@@ -62,9 +62,10 @@ class AjaxRequest {
                 </div>
             </div>
         `
-        console.log(formData)
-        const scrollSentinelDiv = $("#"+formData.scroll_sentinel)
-        scrollSentinelDiv.html(divLoader)
+        const scrollSentinel = formData.scroll_sentinel
+        const scrollSentinelDiv = $("#"+ scrollSentinel)
+
+        scrollSentinel ? scrollSentinelDiv.html(divLoader) : divComponent.html(divLoader)
 
         setTimeout(function () {
             $.ajax({

@@ -96,26 +96,39 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-6">
-                <div class="card card-custom gutter-b">
+                <div class="card card-custom card-stretch gutter-b">
                     <div class="card-header border-0 pt-5">
                         <h3 class="card-title align-items-start flex-column mb-5">
                             <span class="card-label font-weight-bolder text-dark mb-1">Income</span>
                             <span class="text-muted mt-2 font-weight-bold font-size-sm">{{ totals.income|intcomma }} Income Category</span>
                         </h3>
                     </div>
-                    <div class="card-body pt-2" id="incomeDataList">
+
+                    <div class="card-body pt-2">
+                        <div class="w-100 mb-7">
+                            {% include 'components/inputs/search-input-card.html' with id='searchIncomeQuery' class='py-2 px-6 bg-secondary-o-90' placeholder='Search Income Category' %}
+                        </div>
+                        <div class="max-h-550px overflow-auto" id="incomeDataList">
+                            {% include 'components/loader.html' %}
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="card card-custom  gutter-b">
+                <div class="card card-custom card-stretch gutter-b">
                     <div class="card-header border-0 pt-5">
                         <h3 class="card-title align-items-start flex-column mb-5">
                             <span class="card-label font-weight-bolder text-dark mb-1">Expense</span>
                             <span class="text-muted mt-2 font-weight-bold font-size-sm">{{ totals.expense|intcomma }} Expense Category</span>
                         </h3>
                     </div>
-                    <div class="card-body pt-2" id="expenseDataList">
+                    <div class="card-body pt-2">
+                        <div class="w-100 mb-7">
+                            {% include 'components/inputs/search-input-card.html' with id='searchExpenseQuery' class='py-2 px-6 bg-secondary-o-90' placeholder='Search Expense Category' %}
+                        </div>
+                        <div class="max-h-550px overflow-auto" id="expenseDataList">
+                            {% include 'components/loader.html' %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -127,12 +140,13 @@
 {% endblock %}
 {% block script %}
 <script>
-    const searchQuery = $('#searchQuery')
+    const searchExpenseQuery = $('#searchExpenseQuery')
+    const searchIncomeQuery = $('#searchIncomeQuery')
     const selectStatus = $('#selectStatus')
     
     function categoryInputChange() {
         const incomeFormData = {
-            'search': searchQuery.val(),
+            'search': searchIncomeQuery.val(),
             'status': selectStatus.val(),
             'type': 'income',
             'request_url': '{% url 'ledger:subpage_category_list' %}',
@@ -141,7 +155,7 @@
         ajaxSubpageRequest(buildFormData(incomeFormData));
 
         const expenseFormData = {
-            'search': searchQuery.val(),
+            'search': searchExpenseQuery.val(),
             'status': selectStatus.val(),
             'type': 'expense',
             'request_url': '{% url 'ledger:subpage_category_list' %}',
@@ -152,7 +166,8 @@
     
     categoryInputChange()
     
-    searchQuery.on('input', debounce(function() {categoryInputChange()}, 500))
+    searchIncomeQuery.on('input', debounce(function() {categoryInputChange()}, 500))
+    searchExpenseQuery.on('input', debounce(function() {categoryInputChange()}, 500))
     selectStatus.on('change', categoryInputChange)
 </script>
 {% endblock %}

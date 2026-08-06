@@ -5,6 +5,8 @@ import string
 from datetime import datetime
 from decimal import Decimal
 from functools import reduce
+
+from django.contrib.auth.models import User
 from django.db.models import Q, QuerySet, Sum, Value
 from django.db.models.functions import Coalesce
 from django.urls import reverse
@@ -88,9 +90,10 @@ class GenericResponse:
         user_message="Unable to process the request as of this moment.",
         reference_number_list: dict = None
     ):
+        user = user if user else None
         user_activity_log.save(
             request=request,
-            user=user if user else request.user if request.user else None,
+            user=request.user if request.user.is_authenticated else user,
             activity_type=method,
             activity_details=message if message else user_message,
             success=False,
@@ -231,3 +234,38 @@ def paginate_key_set(
             "prev_cursor": first_item_id,
         }
     }
+
+
+def calculate_percentage(limit: Decimal, spent: Decimal):
+    if limit > 0:
+        remaining = max(limit - spent, Decimal("0"))
+        return round((remaining / limit) * 100, 2)
+    return 0
+
+
+def get_current_month_spent(category_ids: [], owner: User):
+    now = datetime.now()
+    expense_totals = (
+        Record.objects.filter(
+            category_id__in=category_ids,
+            transaction_date__month=now.month,
+            transaction_date__year=now.year,
+            type=RecordType.EXPENSE,
+            account_from__owner=owner
+        )
+        .values("category_id")
+        .annotate(total_spent=Coalesce(Sum("amount"), Value(Decimal("0"))))
+    )
+    return {item["category_id"]: item["total_spent"] for item in expense_totals}
+
+
+def update_budget_calculations(budget: Budget, owner: User):
+    spent_map = get_current_month_spent([budget.category_id], owner)
+    limit = budget.limit
+    spent = spent_map.get(budget.category_id, Decimal("0"))
+    percentage = calculate_percentage(limit, spent)
+
+    budget.spent = spent
+    budget.percentage = percentage
+    budget.save(update_fields=["spent", "percentage"])
+

@@ -8,7 +8,13 @@ from django.views.decorators.http import require_POST
 
 from ledger.forms import RecordForms
 from utils.decorators import login_required
-from utils.helpers import GenericResponse, generate_unique_ref
+from utils.helpers import (
+    GenericResponse,
+    generate_unique_ref,
+    calculate_percentage,
+    get_current_month_spent,
+    update_budget_calculations
+)
 from ledger.models import Category, Account, RecordType, Record, Budget
 from main.models import Icons, Institution
 
@@ -205,7 +211,7 @@ def add_record(request):
                 ).first()
 
                 if budget:
-                    budget.recalculate_spent()
+                    update_budget_calculations(budget, request.user)
 
             elif record_type == RecordType.TRANSFER:
                 account_from = data.get("account_from")
@@ -306,7 +312,7 @@ def update_record(request):
                 ).first()
 
                 if budget:
-                    budget.recalculate_spent()
+                    update_budget_calculations(budget, request.user)
 
             elif record_type == RecordType.TRANSFER:
                 account_from = data.get("account_from")
@@ -360,6 +366,7 @@ def delete_record(request):
         with transaction.atomic():
             record_form = RecordForms(request)
             record_form.revert_transaction(record)
+            record.delete()
 
             budget = Budget.objects.filter(
                 category=record.category,
@@ -369,9 +376,7 @@ def delete_record(request):
             ).first()
 
             if budget:
-                budget.recalculate_spent()
-
-            record.delete()
+                update_budget_calculations(budget, request.user)
 
         return JsonResponse(GenericResponse.success(
             request=request,
@@ -422,7 +427,7 @@ def add_budget(request):
                 year=now.year,
                 limit=limit_amount
             )
-            budget.recalculate_spent()
+            update_budget_calculations(budget, request.user)
 
         return JsonResponse(GenericResponse.success(
             request=request,
@@ -440,16 +445,81 @@ def add_budget(request):
 
 @login_required
 @require_POST
+def bulk_insert_budget(request):
+    data = request.POST
+    month_and_year = data.get("month_and_year")
+    method = f"Copy Budget of {month_and_year}"
+
+    try:
+        now = datetime.now()
+        budget_list = Budget.objects.filter(
+            id__in=data.getlist("selected_budget"))
+
+        if not budget_list:
+            return JsonResponse(GenericResponse.error(
+                request=request,
+                method=method,
+                user_message="No budget selected to copy. Please select a month that has at least one budget to copy.",
+            ))
+
+        category_ids = [b.category_id for b in budget_list]
+        spent_map = get_current_month_spent(category_ids, request.user)
+
+        new_budgets = list()
+        for budget in budget_list:
+            limit = budget.limit or Decimal("0")
+            spent = spent_map.get(budget.category_id, Decimal("0"))
+            percentage = calculate_percentage(limit, spent)
+
+            new_budgets.append(
+                Budget(
+                    category=budget.category,
+                    owner=request.user,
+                    month=now.month,
+                    year=now.year,
+                    limit=limit,
+                    spent=spent,
+                    percentage=percentage,
+                )
+            )
+
+        if new_budgets:
+            with transaction.atomic():
+                Budget.objects.bulk_create(
+                    new_budgets,
+                    update_conflicts=True,
+                    unique_fields=["category", "owner", "month", "year"],
+                    update_fields=["limit", "spent", "percentage"],
+                )
+
+        return JsonResponse(GenericResponse.success(
+            request=request,
+            method=method,
+            message=f"Budget was successfully copied."
+        ))
+
+    except Exception as e:
+        return JsonResponse(GenericResponse.error(
+            request=request,
+            method=method,
+            message=str(e),
+        ))
+
+
+@login_required
+@require_POST
 def update_budget(request):
     data = request.POST
     category_name = data.get("category_name")
     method = f"Update Budget for {category_name}"
+
     try:
+        budget = Budget.objects.get(id=data.get("budget_id"))
         with transaction.atomic():
-            budget = Budget.objects.get(id=data.get("budget_id"))
             budget.limit = Decimal(data.get("amount", budget.limit).replace(",", ""))
             budget.save()
-            budget.recalculate_spent()
+
+        update_budget_calculations(budget, request.user)
 
         return JsonResponse(GenericResponse.success(
             request=request,

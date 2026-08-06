@@ -88,7 +88,7 @@
             function ajaxSubpageRequest(formData){
                 const requestURL = formData.request_url
                 const divComponent = $('#'+formData.component_id)
-                const timer = 0
+                const timer = formData.timer ? formData.timer : 0
                 Ajax.subpageRequest(
                     requestURL,
                     formData,

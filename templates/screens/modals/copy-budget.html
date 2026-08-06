@@ -1,0 +1,139 @@
+{% load static %}
+<form id="copyBudgetForm" method="POST" action="">
+    {% csrf_token %}
+    <input type="hidden" name="month" id="month" value="{{ last_month.month }}">
+    <input type="hidden" name="year" id="year" value="{{ last_month.year }}">
+    <input type="hidden" name="month_and_year" id="month_and_year" value="{% now 'F Y' %}">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Copy Budget-Limit</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i aria-hidden="true" class="ki ki-close"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row justify-content-center ">
+            <div class="col-lg-12">
+                <div class="alert alert-custom alert-default" role="alert">
+                    <div class="alert-icon">
+                        <span class="svg-icon svg-icon-warning svg-icon-xl">
+                            <span class="svg-icon svg-icon-primary svg-icon-2x">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <rect x="0" y="0" width="24" height="24"></rect>
+                                        <path d="M11.1669899,4.49941818 L2.82535718,19.5143571 C2.557144,19.9971408 2.7310878,20.6059441 3.21387153,20.8741573 C3.36242953,20.9566895 3.52957021,21 3.69951446,21 L21.2169432,21 C21.7692279,21 22.2169432,20.5522847 22.2169432,20 C22.2169432,19.8159952 22.1661743,19.6355579 22.070225,19.47855 L12.894429,4.4636111 C12.6064401,3.99235656 11.9909517,3.84379039 11.5196972,4.13177928 C11.3723594,4.22181902 11.2508468,4.34847583 11.1669899,4.49941818 Z" fill="#000000" opacity="0.3"></path>
+                                        <rect fill="#000000" x="11" y="9" width="2" height="7" rx="1"></rect>
+                                        <rect fill="#000000" x="11" y="17" width="2" height="2" rx="1"></rect>
+                                    </g>
+                                </svg>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="alert-text"><strong>Heads up!</strong> Proceeding will replace any budget limits you’ve already set for this month.</div>
+                </div>
+            </div>
+            <div class="col-lg-12 mt-2">
+                <div id="carouselExampleControls" class="carousel slide bg-gray-100 py-5 rounded" data-ride="carousel" data-interval="false">
+                    <div class="carousel-inner">
+                        {% for previous_month in previous_months %}
+                      	<div class="carousel-item {% if forloop.last %}active{% endif %}  text-center"
+                             data-year="{{ previous_month.year }}" 
+                             data-month="{{ previous_month.month }}" 
+                             data-month_and_year="{{ previous_month.value }}">
+                          <span class="d-block text-dark font-weight-bolder font-size-lg">{{ previous_month.value }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <a class="carousel-control-prev bg-gray-100" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <i class="flaticon2-back icon-md text-dark"></i>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next bg-gray-100 d-none" href="#carouselExampleControls" role="button" data-slide="next">
+                        <i class="flaticon2-next icon-md text-dark"></i>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-12 h-400px my-5 overflow-auto" id="copyBudgetList">
+            </div>
+            <div class="col-12 text-left">
+                <span class="text-muted my-3">Select a previous month you want to copy from</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" id="closeBtn" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
+        <button type="submit" id="submitBtn" class="btn btn-primary font-weight-bold">Submit</button>
+    </div>
+</form>
+<script src="{% static 'js/autonumeric.js' %}"></script>
+<script>
+    $(document).ready(function() {
+
+        const year = $('#year')
+        const month = $('#month')
+        const monthAndYear = $('#month_and_year')
+        const carouselEl = $('#carouselExampleControls');
+        const prevBtn = $('.carousel-control-prev');
+        const nextBtn = $('.carousel-control-next');
+        const totalItems = $('.carousel-item').length;
+
+        carouselEl.on('slide.bs.carousel', function (e) {
+            year.val($(e.relatedTarget).data('year'))
+            month.val($(e.relatedTarget).data('month'))
+            monthAndYear.val($(e.relatedTarget).data('month_and_year'))
+
+            if (e.to === 0) {
+                prevBtn.addClass('d-none');
+            } else {
+                prevBtn.removeClass('d-none');
+            }
+
+            if (e.to === totalItems - 1) {
+                nextBtn.addClass('d-none');
+            } else {
+                nextBtn.removeClass('d-none');
+            }
+
+            budgetTemplateChange()
+        });
+
+        const copyBudgetForm = $('#copyBudgetForm')
+        copyBudgetForm.submit(function (e) {
+            e.preventDefault()
+            const redirectionURL = 'flag_redirection'
+            const closeBtn = $('#closeBtn')
+            const submitBtn = $('#submitBtn')
+            const requestURL = '{% url 'ledger:ajax_bulk_insert_budget' %}'
+            const formData = new FormData(copyBudgetForm[0]);
+            
+            Ajax.postRequest(
+                requestURL,
+                formData,
+                submitBtn,
+                redirectionURL,
+            ).then(function (response) {
+                if (response.success){
+                    closeBtn.click();
+                    categoryInputChange();
+                    handleBudgetFilterChange();
+                    resetInputs();
+                }
+            })
+        })
+
+        function budgetTemplateChange() {
+            const defaultFormData = {
+                'month': month.val(),
+                'year': year.val(),
+                'template': 'card-symbol-4.html',
+                'component_id': 'copyBudgetList',
+                'request_url': '{% url 'ledger:subpage_budget_list' %}',
+                'timer': 500
+            }
+            ajaxSubpageRequest(buildFormData(defaultFormData));
+        }
+
+        budgetTemplateChange()
+    });
+</script>

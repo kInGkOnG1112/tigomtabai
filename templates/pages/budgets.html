@@ -23,112 +23,106 @@
                 <div class="card card-custom card-stretch gutter-b">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between flex-lg-wrap flex-xl-nowrap">
+                            {% url 'ledger:modal_copy_budget' as copy_modal %}
                             <div class="d-flex flex-column mr-5">
-                                <a href="#" class="h4 text-dark text-hover-primary mb-5">Copy Budget-Limits</a>
+                                <a data-open-modal="" data-modal-url="{{ copy_modal }}" class="h4 text-dark text-hover-primary mb-5">Copy Budget-Limits</a>
                                 <p class="text-dark-50 mb-0">Quickly set up your new monthly budget by copying over your spending limits from previous months.</p>
                             </div>
                             <div class="ml-6 ml-lg-0 ml-xxl-6 flex-shrink-0 mt-2">
-                                <a href="custom/apps/support-center/feedback.html" target="_blank" class="btn font-weight-bolder text-uppercase btn-primary py-4 px-6">Copy Budget</a>
+                                <a data-open-modal="" data-modal-url="{{ copy_modal }}" class="btn font-weight-bolder text-uppercase btn-primary py-4 px-6">Copy Budget</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-7">
+            </div>
+        <div class="row">
+            <div class="col-lg-7 order-last order-lg-first">
                 <div class="card card-custom gutter-b">
-                        <div class="card-header border-0">
-                            <div class="card-title py-5">
-                                <h3 class="card-label">
-                                    <span class="d-block text-dark font-weight-bolder">Budgeted Categories</span>
-                                    <span class="d-block text-muted mt-2 font-size-sm">Month of {% now 'F Y' %}</span>
-                                </h3>
-                            </div>
-                            <div class="card-toolbar">
-                                <div class="dropdown dropdown-inline">
-                                    <a href="#" class="btn btn-clean btn-hover-light-primary btn-sm btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="ki ki-bold-more-ver"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-md dropdown-menu-right">
-                                        <ul class="navi navi-hover">
-                                            <li class="navi-header font-weight-bold py-4">
-                                                <span class="font-size-lg">Choose Label:</span>
-                                                <i class="flaticon2-information icon-md text-muted" data-toggle="tooltip" data-placement="right" title="Click to learn more..."></i>
-                                            </li>
-                                            <li class="navi-separator mb-3 opacity-70"></li>
-                                            <li class="navi-item">
-                                                <a href="#" class="navi-link">
-                                                    <span class="navi-text">
-                                                        <span class="label label-xl label-inline label-light-success">Customer</span>
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li class="navi-item">
-                                                <a href="#" class="navi-link">
-                                                    <span class="navi-text">
-                                                        <span class="label label-xl label-inline label-light-danger">Partner</span>
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li class="navi-item">
-                                                <a href="#" class="navi-link">
-                                                    <span class="navi-text">
-                                                        <span class="label label-xl label-inline label-light-warning">Suplier</span>
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li class="navi-item">
-                                                <a href="#" class="navi-link">
-                                                    <span class="navi-text">
-                                                        <span class="label label-xl label-inline label-light-primary">Member</span>
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li class="navi-item">
-                                                <a href="#" class="navi-link">
-                                                    <span class="navi-text">
-                                                        <span class="label label-xl label-inline label-light-dark">Staff</span>
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li class="navi-separator mt-3 opacity-70"></li>
-                                            <li class="navi-footer py-4">
-                                                <a class="btn btn-clean font-weight-bold btn-sm" href="#">
-                                                <i class="ki ki-plus icon-sm"></i>Add new</a>
-                                            </li>
-                                        </ul>
-                                        <!--end::Navigation-->
-                                    </div>
+                    <div class="card-header border-0">
+                        <div class="card-title py-5">
+                            <h3 class="card-label">
+                                <span class="d-block text-dark font-weight-bolder">Budgeted Categories</span>
+                                <span class="d-block text-muted mt-2 font-size-sm">Month of {% now 'F Y' %}</span>
+                            </h3>
+                        </div>
+                        <div class="card-toolbar">
+                            <div class="dropdown dropdown-inline">
+                                <a href="#" class="btn btn-clean btn-hover-light-primary btn-sm btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="ki ki-bold-more-ver"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-md dropdown-menu-right">
+                                    <ul class="navi navi-hover">
+                                        <li class="navi-header font-weight-bold py-4">
+                                            <span class="font-size-lg">Choose Label:</span>
+                                            <i class="flaticon2-information icon-md text-muted" data-toggle="tooltip" data-placement="right" title="Click to learn more..."></i>
+                                        </li>
+                                        <li class="navi-separator mb-3 opacity-70"></li>
+                                        <li class="navi-item">
+                                            <a href="#" class="navi-link">
+                                                <span class="navi-text">
+                                                    <span class="label label-xl label-inline label-light-success">Customer</span>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="navi-item">
+                                            <a href="#" class="navi-link">
+                                                <span class="navi-text">
+                                                    <span class="label label-xl label-inline label-light-danger">Partner</span>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="navi-item">
+                                            <a href="#" class="navi-link">
+                                                <span class="navi-text">
+                                                    <span class="label label-xl label-inline label-light-warning">Suplier</span>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="navi-item">
+                                            <a href="#" class="navi-link">
+                                                <span class="navi-text">
+                                                    <span class="label label-xl label-inline label-light-primary">Member</span>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="navi-item">
+                                            <a href="#" class="navi-link">
+                                                <span class="navi-text">
+                                                    <span class="label label-xl label-inline label-light-dark">Staff</span>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="navi-separator mt-3 opacity-70"></li>
+                                        <li class="navi-footer py-4">
+                                            <a class="btn btn-clean font-weight-bold btn-sm" href="#">
+                                            <i class="ki ki-plus icon-sm"></i>Add new</a>
+                                        </li>
+                                    </ul>
+                                    <!--end::Navigation-->
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body pt-2" id="divDataList">
-                        </div>
                     </div>
+                    <div class="card-body pt-2" id="divDataList">
+                    </div>
+                    <div id="scrollSentinel" class="text-center">
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-5 ">
-                <div class="card card-custom card-stretch gutter-b px-10 pb-15 pt-3">
-                    <div class="card-header h-auto border-0 px-0">
-                        <div class="card-title py-5">
+            <div class="col-lg-5 order-first order-lg-last">
+                <div class="card card-custom gutter-b pt-3">
+                    <div class="card-header border-0">
+                        <div class="card-title">
                             <h3 class="card-label">
                                 <span class="d-block text-dark font-weight-bolder">Categories</span>
-                                <span class="d-block text-muted mt-2 font-size-sm">More than 500+ new orders</span>
+                                <span class="d-block text-muted mt-2 font-size-sm">List of Expense Category</span>
                             </h3>
                         </div>
                     </div>
-                    <div class="card-body d-flex flex-column align-items-center p-0">
+                    <div class="card-body d-flex flex-column align-items-center pt-2">
                         <div class="w-100 mb-7">
-                            <form class="d-flex flex-center py-2 px-6 bg-secondary-o-90 rounded">
-                                <span class="svg-icon svg-icon-lg svg-icon-primary">
-                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                            <rect x="0" y="0" width="24" height="24"></rect>
-                                            <path d="M14.2928932,16.7071068 C13.9023689,16.3165825 13.9023689,15.6834175 14.2928932,15.2928932 C14.6834175,14.9023689 15.3165825,14.9023689 15.7071068,15.2928932 L19.7071068,19.2928932 C20.0976311,19.6834175 20.0976311,20.3165825 19.7071068,20.7071068 C19.3165825,21.0976311 18.6834175,21.0976311 18.2928932,20.7071068 L14.2928932,16.7071068 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"></path>
-                                            <path d="M11,16 C13.7614237,16 16,13.7614237 16,11 C16,8.23857625 13.7614237,6 11,6 C8.23857625,6 6,8.23857625 6,11 C6,13.7614237 8.23857625,16 11,16 Z M11,18 C7.13400675,18 4,14.8659932 4,11 C4,7.13400675 7.13400675,4 11,4 C14.8659932,4 18,7.13400675 18,11 C18,14.8659932 14.8659932,18 11,18 Z" fill="#000000" fill-rule="nonzero"></path>
-                                        </g>
-                                    </svg>
-                                </span>
-                                <input type="text" id="searchCategory" class="form-control border-0 font-weight-bold pl-2 bg-transparent" placeholder="Search Categories">
-                            </form>
+                            {% include 'components/inputs/search-input-card.html' with id='searchCategory' class='py-2 px-6 bg-secondary-o-90' placeholder='Search Categories' %}
                         </div>
                         <div class="row px-0 max-h-550px overflow-auto" id="expenseDataList"> </div>
                     </div>
@@ -141,7 +135,35 @@
 {% block script %}
 <script>
     const searchQuery = $('#searchCategory')
+    const scrollSpinner = $('#scrollSpinner')
     const now = new Date();
+
+    const budgetScroll = new InfiniteScrollController({
+        sentinelSelector: '#scrollSentinel',
+        getCursorVal: () => cursor.val(),
+        resetCursorVal: () => cursor.val(''),
+        fetchCallback: function(isAppend) {
+            scrollSpinner.toggle(isAppend);
+
+            const formData = buildFormData({
+                'search': searchQuery.val(),
+                'cursor': cursor.val(),
+                'direction': 'next',
+                'month': now.getMonth() + 1,
+                'year': now.getFullYear(),
+                'paginated': true,
+                'append': isAppend,
+                'scroll_sentinel': 'scrollSentinel',
+                'request_url': '{% url 'ledger:subpage_budget_list' %}',
+            });
+
+            return ajaxSubpageRequest(buildFormData(formData));
+        }
+    });
+
+    const handleBudgetFilterChange = debounce(() => {
+        budgetScroll.resetAndFetch();
+    }, 500);
 
     function categoryInputChange() {
         const expenseFormData = {
@@ -155,22 +177,9 @@
         ajaxSubpageRequest(buildFormData(expenseFormData));
     }
 
-    function budgetInputChange() {
-        const defaultFormData = {
-            'search': searchQuery.val(),
-            'month': now.getMonth() + 1,
-            'year': now.getFullYear(),
-            'request_url': '{% url 'ledger:subpage_budget_list' %}',
-        }
-        ajaxSubpageRequest(buildFormData(defaultFormData));
-    }
-
-    function resetInputs() {
-        searchQuery.val('')
-    }
+    function resetInputs() { searchQuery.val('') }
 
     categoryInputChange()
-    budgetInputChange()
 
     searchQuery.on('input', debounce(function() {categoryInputChange()}, 500))
 
@@ -202,11 +211,17 @@
                     if (response?.success) {
                         closeBtn.click()
                         categoryInputChange()
-                        budgetInputChange()
+                        handleBudgetFilterChange()
                     }
                 });
             }
         });
+    }
+
+    function updatePaginationState(nextCursor, hasNextPage) {
+        console.log(nextCursor, hasNextPage)
+        cursor.val(nextCursor);
+        budgetScroll.setHasMore(hasNextPage);
     }
 </script>
     

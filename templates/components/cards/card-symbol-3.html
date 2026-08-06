@@ -79,8 +79,15 @@
     <div class="separator separator-solid my-7"></div>
 {% empty %}
     <div class="d-flex flex-column text-center align-items-center mb-20 mt-15">
+        {% url 'ledger:modal_copy_budget' as copy_modal %}
         <i class="flaticon-folder-1 icon-3x"></i>
         <span class="text-muted text-lg mt-5">You haven't set a budget for this month yet! Get started by setting new spending limits or <br>quickly copying your targets from a previous month.</span>
-        <a href="custom/apps/support-center/feedback.html" target="_blank" class="mt-5 btn font-weight-bolder text-uppercase btn-secondary py-4 px-6 w-150px">Copy Budget</a>
+        <a data-open-modal="" data-modal-url="{{ copy_modal }}"  class="mt-5 btn font-weight-bolder text-uppercase btn-secondary py-4 px-6 w-150px">Copy Budget</a>
     </div>
 {% endfor %}
+<script>
+    updatePaginationState(
+        {{ pagination.next_cursor|default:"null" }},
+        {% if pagination.has_next %}true{% else %}false{% endif %}
+    );
+</script>

@@ -99,9 +99,8 @@ class Budget(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        indexes = [
-            models.Index(fields=["category", "owner"])
-        ]
+        unique_together = [("category", "owner", "month", "year")]
+        indexes = [models.Index(fields=["category", "owner"])]
         ordering = ["-pk"]
 
     def __str__(self):
@@ -117,12 +116,13 @@ class Budget(models.Model):
         remaining = self.limit - self.spent
         return remaining if remaining > 0 else 0
 
-    def recalculate_spent(self):
+    def recalculate_spent(self, owner):
         spent = Record.objects.filter(
             category_id=self.category_id,
             transaction_date__month=self.month,
             transaction_date__year=self.year,
-            type=RecordType.EXPENSE
+            type=RecordType.EXPENSE,
+            account_from__owner=owner
         ).aggregate(
             spent=Coalesce(Sum("amount"), Value(Decimal("0")))
         )["spent"]

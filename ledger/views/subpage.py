@@ -6,7 +6,7 @@ from django.views.decorators.http import require_GET
 
 from ledger.forms import RecordForms
 from utils.decorators import login_required
-from utils.helpers import search_result
+from utils.helpers import search_result, paginate_key_set
 from ledger.models import Category, Account, Record, Budget
 
 
@@ -91,6 +91,7 @@ def record_list(request):
 def budget_list(request):
     data = request.GET
     now = datetime.now()
+    template = data.get("template", "card-symbol-3.html")
 
     queryset = Budget.objects.filter(owner=request.user)
 
@@ -108,8 +109,24 @@ def budget_list(request):
         orm_lookups = ["category__name__icontains"]
         queryset = search_result(queryset, search, orm_lookups)
 
+    pagination = {}
+    paginated = data.get("paginated")
+    if paginated:
+        cursor = data.get("cursor")
+        direction = data.get("direction", "next")
+        page_size = int(data.get("page_size", 10))
+        pagination_data = paginate_key_set(
+            queryset=queryset,
+            cursor=cursor,
+            direction=direction,
+            page_size=page_size,
+        )
+        queryset = pagination_data["results"]
+        pagination = pagination_data["pagination"]
+
     context = {
         "data_list": queryset,
+        "pagination": pagination,
         "payload_data": data.dict(),
     }
-    return render(request, template_name="components/cards/card-symbol-3.html", context=context)
+    return render(request, template_name=f"components/cards/{template}", context=context)

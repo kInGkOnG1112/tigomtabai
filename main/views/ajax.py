@@ -32,7 +32,7 @@ def login_signin(request):
                     request=request,
                     user=profile.user,
                     method=method,
-                    message='Account is temporarily locked. Please try again later.',
+                    user_message='Account is temporarily locked. Please try again later.',
                 ))
 
             profile.is_locked = False
@@ -54,7 +54,7 @@ def login_signin(request):
                 request=request,
                 user=profile.user if profile else None,  # Safe fallback if profile doesn't exist
                 method=method,
-                message='Invalid username/password.',
+                user_message='Invalid username/password.',
             ))
 
         if profile:

@@ -25,6 +25,7 @@ urlpatterns_ajax = [
     path('ajax/delete-record/', ajax.delete_record, name='ajax_delete_record'),
 
     path('ajax/add-budget/', ajax.add_budget, name='ajax_add_budget'),
+    path('ajax/bulk-insert-budget/', ajax.bulk_insert_budget, name='ajax_bulk_insert_budget'),
     path('ajax/update-budget/', ajax.update_budget, name='ajax_update_budget'),
     path('ajax/delete-budget/', ajax.delete_budget, name='ajax_delete_budget'),
 ]
@@ -40,6 +41,7 @@ urlpatterns_modals = [
 
     path('modals/budget/add/<int:category_id>', modals.add_budget, name='modal_add_budget'),
     path('modals/budget/update/<int:budget_id>', modals.update_budget, name='modal_update_budget'),
+    path('modals/budget/copy/', modals.copy_budget, name='modal_copy_budget'),
 ]
 
 

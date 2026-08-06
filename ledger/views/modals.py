@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.shortcuts import render
 from ledger.models import Account, Category, CategoryType, Record, Budget
 from main.models import Icons, IconType, Institution
@@ -51,6 +53,26 @@ def update_budget(request, budget_id):
     budget = Budget.objects.get(id=budget_id)
     context = {"budget": budget}
     return render(request, template_name="screens/modals/update-budget.html", context=context)
+
+
+@login_required
+def copy_budget(request):
+    current_date = datetime.now().replace(day=1)
+    previous_months = []
+    for _ in range(25):
+        current_date = current_date - timedelta(days=1)
+        previous_months.append({
+            "value": current_date.strftime("%B %Y"),
+            "month": current_date.month,
+            "year": current_date.year
+        })
+        current_date = current_date.replace(day=1)
+
+    context = {
+        "last_month": previous_months[0],
+        "previous_months": previous_months[::-1]
+    }
+    return render(request, template_name="screens/modals/copy-budget.html", context=context)
 
 
 @login_required
